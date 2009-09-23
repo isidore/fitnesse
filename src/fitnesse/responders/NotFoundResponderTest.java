@@ -5,14 +5,14 @@ package fitnesse.responders;
 import util.RegexTestCase;
 import fitnesse.FitNesseContext;
 import fitnesse.Responder;
-import fitnesse.http.MockRequest;
+import fitnesse.http.SettableRequest;
 import fitnesse.http.SimpleResponse;
 import fitnesse.wiki.InMemoryPage;
 import fitnesse.wiki.WikiPage;
 
 public class NotFoundResponderTest extends RegexTestCase {
   public void testResponse() throws Exception {
-    MockRequest request = new MockRequest();
+    SettableRequest request = new SettableRequest();
     request.setResource("some page");
 
     Responder responder = new NotFoundResponder();
@@ -29,7 +29,7 @@ public class NotFoundResponderTest extends RegexTestCase {
   }
 
   public void testHasEditLinkForWikiWords() throws Exception {
-    MockRequest request = new MockRequest();
+    SettableRequest request = new SettableRequest();
     request.setResource("PageOne.PageTwo");
     WikiPage root = InMemoryPage.makeRoot("RooT");
 

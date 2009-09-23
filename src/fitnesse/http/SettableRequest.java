@@ -2,10 +2,10 @@
 // Released under the terms of the CPL Common Public License version 1.0.
 package fitnesse.http;
 
-public class MockRequest extends Request {
+public class SettableRequest extends Request {
   private Exception parseException = null;
 
-  public MockRequest() {
+  public SettableRequest() {
     super.setResource("");
   }
 
@@ -38,15 +38,18 @@ public class MockRequest extends Request {
     parseException = e;
   }
 
+  @Override
   public void getCredentials() {
   }
 
+  @Override
   public void setCredentials(String username, String password) {
     authorizationUsername = username;
     authorizationPassword = password;
 
   }
 
+  @Override
   public void parse() throws Exception {
     if (parseException != null) {
       throw parseException;

@@ -5,7 +5,7 @@ package fitnesse.responders.versions;
 import util.RegexTestCase;
 import fitnesse.FitNesseContext;
 import fitnesse.Responder;
-import fitnesse.http.MockRequest;
+import fitnesse.http.SettableRequest;
 import fitnesse.http.SimpleResponse;
 import fitnesse.wiki.InMemoryPage;
 import fitnesse.wiki.PageData;
@@ -27,7 +27,7 @@ public class VersionResponderTest extends RegexTestCase {
     VersionInfo commitRecord = page.commit(data);
     oldVersion = commitRecord.getName();
 
-    MockRequest request = new MockRequest();
+    SettableRequest request = new SettableRequest();
     request.setResource(pageName);
     request.addInput("version", oldVersion);
 

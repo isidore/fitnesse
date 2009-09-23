@@ -1,7 +1,7 @@
 package fitnesse.responders.run;
 
 import fitnesse.FitNesseContext;
-import fitnesse.http.MockRequest;
+import fitnesse.http.SettableRequest;
 import fitnesse.slimTables.HtmlTableScanner;
 import fitnesse.slimTables.Table;
 import fitnesse.testutil.FitNesseUtil;
@@ -17,7 +17,7 @@ import org.junit.Test;
 //|Content|contentRegEx|
 
 public class SuiteSpecificationRunnerTest {
-  private MockRequest request;
+  private SettableRequest request;
   private SuiteSpecificationRunner runner;
   private WikiPage root;
   private FitNesseContext context;
@@ -36,7 +36,7 @@ public class SuiteSpecificationRunnerTest {
     data.setAttribute("Test");
     child.commit(data);
     crawler.addPage(root, PathParser.parse("TestPageTwo"), "TestPageTwo has a bit of content too");
-    request = new MockRequest();
+    request = new SettableRequest();
     request.setResource(suitePageName);
     context = FitNesseUtil.makeTestContext(root);
     context.root = root;

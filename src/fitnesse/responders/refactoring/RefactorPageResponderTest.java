@@ -5,7 +5,7 @@ package fitnesse.responders.refactoring;
 import util.RegexTestCase;
 import fitnesse.FitNesseContext;
 import fitnesse.Responder;
-import fitnesse.http.MockRequest;
+import fitnesse.http.SettableRequest;
 import fitnesse.http.SimpleResponse;
 import fitnesse.wiki.InMemoryPage;
 import fitnesse.wiki.PageCrawler;
@@ -14,7 +14,7 @@ import fitnesse.wiki.WikiPage;
 
 public class RefactorPageResponderTest extends RegexTestCase {
   WikiPage root;
-  private MockRequest request;
+  private SettableRequest request;
   private Responder responder;
   private String childPage = "ChildPage";
   private PageCrawler crawler;
@@ -24,7 +24,7 @@ public class RefactorPageResponderTest extends RegexTestCase {
     crawler = root.getPageCrawler();
     crawler.addPage(root, PathParser.parse(childPage));
 
-    request = new MockRequest();
+    request = new SettableRequest();
     request.setResource(childPage);
     responder = new RefactorPageResponder();
   }

@@ -5,7 +5,7 @@ package fitnesse.responders.search;
 import util.RegexTestCase;
 import fitnesse.FitNesseContext;
 import fitnesse.testutil.FitNesseUtil;
-import fitnesse.http.MockRequest;
+import fitnesse.http.SettableRequest;
 import fitnesse.http.MockResponseSender;
 import fitnesse.http.Response;
 import fitnesse.wiki.InMemoryPage;
@@ -27,7 +27,7 @@ public class WhereUsedResponderTest extends RegexTestCase {
   }
 
   public void testResponse() throws Exception {
-    MockRequest request = new MockRequest();
+    SettableRequest request = new SettableRequest();
     request.setResource("PageOne");
     WhereUsedResponder responder = new WhereUsedResponder();
 

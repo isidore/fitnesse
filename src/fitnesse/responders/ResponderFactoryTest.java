@@ -4,7 +4,7 @@ package fitnesse.responders;
 
 
 import fitnesse.Responder;
-import fitnesse.http.MockRequest;
+import fitnesse.http.SettableRequest;
 import fitnesse.responders.editing.*;
 import fitnesse.responders.files.*;
 import fitnesse.responders.refactoring.DeletePageResponder;
@@ -34,7 +34,7 @@ import java.io.File;
 
 public class ResponderFactoryTest {
   private ResponderFactory factory;
-  private MockRequest request;
+  private SettableRequest request;
   private WikiPageDummy nonExistantPage;
   private WikiPage root;
   private PageCrawler crawler;
@@ -42,7 +42,7 @@ public class ResponderFactoryTest {
   @Before
   public void setUp() throws Exception {
     factory = new ResponderFactory("testDir");
-    request = new MockRequest();
+    request = new SettableRequest();
     root = InMemoryPage.makeRoot("root");
     crawler = root.getPageCrawler();
     nonExistantPage = new WikiPageDummy();
@@ -56,7 +56,7 @@ public class ResponderFactoryTest {
   }
 
   private void checkResponderKey(String queryString, String key) {
-    MockRequest request = new MockRequest();
+    SettableRequest request = new SettableRequest();
     request.setQueryString(queryString);
     assertEquals(key, factory.getResponderKey(request));
   }

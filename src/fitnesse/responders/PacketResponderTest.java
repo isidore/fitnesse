@@ -8,7 +8,7 @@ import org.junit.Test;
 
 import fitnesse.FitNesseContext;
 import fitnesse.Responder;
-import fitnesse.http.MockRequest;
+import fitnesse.http.SettableRequest;
 import fitnesse.http.SimpleResponse;
 import fitnesse.wiki.InMemoryPage;
 import fitnesse.wiki.PageCrawler;
@@ -17,7 +17,7 @@ import fitnesse.wiki.WikiPage;
 
 public class PacketResponderTest {
   protected WikiPage root;
-  protected MockRequest request;
+  protected SettableRequest request;
   protected Responder responder;
   protected PageCrawler crawler;
   protected FitNesseContext context;
@@ -27,7 +27,7 @@ public class PacketResponderTest {
   public void setUp() throws Exception {
     root = InMemoryPage.makeRoot("RooT");
     crawler = root.getPageCrawler();
-    request = new MockRequest();
+    request = new SettableRequest();
     responder = new PacketResponder();
     context = new FitNesseContext(root);
   }

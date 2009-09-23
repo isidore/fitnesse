@@ -6,7 +6,7 @@ import java.util.regex.Pattern;
 
 import util.RegexTestCase;
 import fitnesse.components.LogData;
-import fitnesse.http.MockRequest;
+import fitnesse.http.SettableRequest;
 import fitnesse.http.SimpleResponse;
 import fitnesse.responders.ResponderFactory;
 import fitnesse.responders.files.SampleFileUtility;
@@ -100,7 +100,7 @@ public class FitNesseServerTest extends RegexTestCase {
   }
 
   public void testLoggingDataCreation() throws Exception {
-    MockRequest request = new MockRequest();
+    SettableRequest request = new SettableRequest();
     SimpleResponse response = new SimpleResponse(200);
     MockSocket socket = new MockSocket("something");
 

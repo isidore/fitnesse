@@ -9,7 +9,7 @@ import util.FileUtil;
 import util.RegexTestCase;
 import fitnesse.FitNesseContext;
 import fitnesse.Responder;
-import fitnesse.http.MockRequest;
+import fitnesse.http.SettableRequest;
 import fitnesse.http.SimpleResponse;
 import fitnesse.wiki.FileSystemPage;
 import fitnesse.wiki.InMemoryPage;
@@ -27,12 +27,12 @@ public class SerializedPageResponderTest extends RegexTestCase {
   private final String RootPath = "TestRooT";
   private PageCrawler crawler;
   private WikiPage root;
-  private MockRequest request;
+  private SettableRequest request;
 
   public void setUp() throws Exception {
     root = InMemoryPage.makeRoot("RooT");
     crawler = root.getPageCrawler();
-    request = new MockRequest();
+    request = new SettableRequest();
   }
 
   public void tearDown() throws Exception {
@@ -72,7 +72,7 @@ public class SerializedPageResponderTest extends RegexTestCase {
     return getObject(root, request);
   }
 
-  private Object getObject(WikiPage root, MockRequest request) throws Exception {
+  private Object getObject(WikiPage root, SettableRequest request) throws Exception {
     Responder responder = new SerializedPageResponder();
     SimpleResponse response = (SimpleResponse) responder.makeResponse(new FitNesseContext(root), request);
 

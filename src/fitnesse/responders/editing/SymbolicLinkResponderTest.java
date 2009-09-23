@@ -6,7 +6,7 @@ import util.FileUtil;
 import util.RegexTestCase;
 import fitnesse.FitNesseContext;
 import fitnesse.Responder;
-import fitnesse.http.MockRequest;
+import fitnesse.http.SettableRequest;
 import fitnesse.http.Response;
 import fitnesse.http.SimpleResponse;
 import fitnesse.wiki.FileSystemPage;
@@ -19,7 +19,7 @@ import fitnesse.wiki.WikiPageProperty;
 public class SymbolicLinkResponderTest extends RegexTestCase {
   private WikiPage root;
   private WikiPage pageOne, pageTwo, childTwo;
-  private MockRequest request;
+  private SettableRequest request;
   private Responder responder;
 
   public void setUp() throws Exception {
@@ -30,7 +30,7 @@ public class SymbolicLinkResponderTest extends RegexTestCase {
     childTwo = pageTwo.addChildPage("ChildTwo");   //#         |--ChildTwo
     pageTwo.addChildPage("ChildThree"); //#         `--ChildThree
 
-    request = new MockRequest();
+    request = new SettableRequest();
     request.setResource("PageOne");
     responder = new SymbolicLinkResponder();
   }

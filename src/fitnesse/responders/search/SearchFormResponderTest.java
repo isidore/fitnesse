@@ -13,7 +13,7 @@ import fitnesse.FitNesseContext;
 import fitnesse.testutil.FitNesseUtil;
 import fitnesse.wiki.InMemoryPage;
 import fitnesse.wiki.WikiPage;
-import fitnesse.http.MockRequest;
+import fitnesse.http.SettableRequest;
 import fitnesse.http.SimpleResponse;
 
 public class SearchFormResponderTest {
@@ -26,7 +26,7 @@ public class SearchFormResponderTest {
     WikiPage root = InMemoryPage.makeRoot("RooT");
     context = FitNesseUtil.makeTestContext(root);
     SearchFormResponder responder = new SearchFormResponder();
-    response = (SimpleResponse) responder.makeResponse(context, new MockRequest());
+    response = (SimpleResponse) responder.makeResponse(context, new SettableRequest());
     content = response.getContent();
   }
 

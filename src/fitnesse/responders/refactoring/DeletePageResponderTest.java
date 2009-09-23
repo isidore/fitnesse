@@ -6,7 +6,7 @@ import java.util.List;
 
 import fitnesse.FitNesseContext;
 import fitnesse.Responder;
-import fitnesse.http.MockRequest;
+import fitnesse.http.SettableRequest;
 import fitnesse.http.Response;
 import fitnesse.http.SimpleResponse;
 import fitnesse.responders.ResponderTestCase;
@@ -25,7 +25,7 @@ public class DeletePageResponderTest extends ResponderTestCase {
   public void testDeleteConfirmation() throws Exception {
     WikiPage level1 = this.crawler.addPage(this.root, this.level1Path);
     this.crawler.addPage(level1, this.level2Path);
-    MockRequest request = new MockRequest();
+    SettableRequest request = new SettableRequest();
     request.setResource(this.qualifiedLevel2Name);
     request.addInput("deletePage", "");
 
@@ -38,7 +38,7 @@ public class DeletePageResponderTest extends ResponderTestCase {
     WikiPage level1 = this.crawler.addPage(this.root, this.level1Path);
     this.crawler.addPage(level1, this.level2Path);
     assertTrue(this.crawler.pageExists(this.root, this.level1Path));
-    MockRequest request = new MockRequest();
+    SettableRequest request = new SettableRequest();
     request.setResource(this.level1Name);
     request.addInput("confirmed", "yes");
 

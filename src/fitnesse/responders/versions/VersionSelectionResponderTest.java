@@ -11,7 +11,7 @@ import java.util.Set;
 import util.RegexTestCase;
 import fitnesse.FitNesseContext;
 import fitnesse.Responder;
-import fitnesse.http.MockRequest;
+import fitnesse.http.SettableRequest;
 import fitnesse.http.SimpleResponse;
 import fitnesse.wiki.InMemoryPage;
 import fitnesse.wiki.PageData;
@@ -70,7 +70,7 @@ public class VersionSelectionResponderTest extends RegexTestCase {
   }
 
   public void testMakeReponder() throws Exception {
-    MockRequest request = new MockRequest();
+    SettableRequest request = new SettableRequest();
     request.setResource("PageOne");
 
     Responder responder = new VersionSelectionResponder();

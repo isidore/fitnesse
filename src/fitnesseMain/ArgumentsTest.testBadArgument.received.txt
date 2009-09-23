@@ -1,0 +1,6 @@
+Port: 80 
+Root Path: .
+RootDirectory: FitNesseRoot
+LogDirectory: null
+Days Till Version Expire: 14 
+UserPassword File: null

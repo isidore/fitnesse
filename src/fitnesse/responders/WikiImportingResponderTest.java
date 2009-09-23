@@ -6,7 +6,7 @@ import util.RegexTestCase;
 import fitnesse.FitNesseContext;
 import fitnesse.authentication.OneUserAuthenticator;
 import fitnesse.http.ChunkedResponse;
-import fitnesse.http.MockRequest;
+import fitnesse.http.SettableRequest;
 import fitnesse.http.MockResponseSender;
 import fitnesse.http.Response;
 import fitnesse.testutil.FitNesseUtil;
@@ -158,19 +158,19 @@ public class WikiImportingResponderTest extends RegexTestCase {
   }
 
   private ChunkedResponse makeSampleResponse(String remoteUrl) throws Exception {
-    MockRequest request = makeRequest(remoteUrl);
+    SettableRequest request = makeRequest(remoteUrl);
 
     return getResponse(request);
   }
 
-  private ChunkedResponse getResponse(MockRequest request) throws Exception {
+  private ChunkedResponse getResponse(SettableRequest request) throws Exception {
     Response response = responder.makeResponse(new FitNesseContext(testData.localRoot), request);
     assertTrue(response instanceof ChunkedResponse);
     return (ChunkedResponse) response;
   }
 
-  private MockRequest makeRequest(String remoteUrl) {
-    MockRequest request = new MockRequest();
+  private SettableRequest makeRequest(String remoteUrl) {
+    SettableRequest request = new SettableRequest();
     request.setResource("PageTwo");
     request.addInput("responder", "import");
     request.addInput("remoteUrl", remoteUrl);
@@ -178,7 +178,7 @@ public class WikiImportingResponderTest extends RegexTestCase {
   }
 
   public void testMakeResponseImportingNonRootPage() throws Exception {
-    MockRequest request = makeRequest(baseUrl + "PageOne");
+    SettableRequest request = makeRequest(baseUrl + "PageOne");
 
     Response response = responder.makeResponse(new FitNesseContext(testData.localRoot), request);
     MockResponseSender sender = new MockResponseSender();
@@ -249,7 +249,7 @@ public class WikiImportingResponderTest extends RegexTestCase {
   public void testImportingFromSecurePageWithCredentials() throws Exception {
     makeSecurePage(testData.remoteRoot);
 
-    MockRequest request = makeRequest(baseUrl);
+    SettableRequest request = makeRequest(baseUrl);
     request.addInput("remoteUsername", "joe");
     request.addInput("remotePassword", "blow");
     Response response = getResponse(request);
@@ -284,7 +284,7 @@ public class WikiImportingResponderTest extends RegexTestCase {
   }
 
   public void testAutoUpdatingTurnedOn() throws Exception {
-    MockRequest request = makeRequest(baseUrl);
+    SettableRequest request = makeRequest(baseUrl);
     responder.setRequest(request);
     responder.data = new PageData(new WikiPageDummy());
 

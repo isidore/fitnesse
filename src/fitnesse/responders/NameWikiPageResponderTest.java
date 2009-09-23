@@ -3,7 +3,7 @@
 package fitnesse.responders;
 
 import fitnesse.FitNesseContext;
-import fitnesse.http.MockRequest;
+import fitnesse.http.SettableRequest;
 import fitnesse.http.Response;
 import fitnesse.http.SimpleResponse;
 import fitnesse.wiki.*;
@@ -20,7 +20,7 @@ import java.util.Set;
 public class NameWikiPageResponderTest {
   private WikiPage root;
   private NameWikiPageResponder responder;
-  private MockRequest request;
+  private SettableRequest request;
   private PageCrawler crawler;
   private String pageOneName;
   private String pageTwoName;
@@ -34,7 +34,7 @@ public class NameWikiPageResponderTest {
     root = InMemoryPage.makeRoot("RooT");
     crawler = root.getPageCrawler();
     responder = new NameWikiPageResponder();
-    request = new MockRequest();
+    request = new SettableRequest();
 
     pageOneName = "PageOne";
     pageTwoName = "PageTwo";

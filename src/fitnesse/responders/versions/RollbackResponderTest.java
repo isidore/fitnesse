@@ -5,7 +5,7 @@ package fitnesse.responders.versions;
 import junit.framework.TestCase;
 import fitnesse.FitNesseContext;
 import fitnesse.Responder;
-import fitnesse.http.MockRequest;
+import fitnesse.http.SettableRequest;
 import fitnesse.http.Response;
 import fitnesse.wiki.InMemoryPage;
 import fitnesse.wiki.PageData;
@@ -26,7 +26,7 @@ public class RollbackResponderTest extends TestCase {
     data.setProperties(new WikiPageProperties());
     VersionInfo commitRecord = page.commit(data);
 
-    MockRequest request = new MockRequest();
+    SettableRequest request = new SettableRequest();
     request.setResource("PageOne");
     request.addInput("version", commitRecord.getName());
 

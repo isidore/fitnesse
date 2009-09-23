@@ -1,21 +1,30 @@
 package fitnesse.responders.testHistory;
 
-import fitnesse.FitNesseContext;
-import fitnesse.VelocityFactory;
-import fitnesse.responders.run.TestExecutionReport;
-import fitnesse.testutil.FitNesseUtil;
-import fitnesse.wiki.*;
-import org.apache.velocity.app.VelocityEngine;
-import org.junit.After;
-import static org.junit.Assert.*;
-import org.junit.Before;
-import org.junit.Test;
-import util.FileUtil;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static util.RegexTestCase.assertSubString;
 
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
+
+import org.apache.velocity.app.VelocityEngine;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import util.FileUtil;
+import fitnesse.FitNesseContext;
+import fitnesse.VelocityFactory;
+import fitnesse.responders.run.TestExecutionReport;
+import fitnesse.testutil.FitNesseUtil;
+import fitnesse.wiki.InMemoryPage;
+import fitnesse.wiki.PageCrawler;
+import fitnesse.wiki.PageData;
+import fitnesse.wiki.PathParser;
+import fitnesse.wiki.WikiPage;
 
 public class HistoryComparerTest {
   private HistoryComparer comparer;
@@ -27,6 +36,7 @@ public class HistoryComparerTest {
   @Before
   public void setUp() throws Exception {
     comparer = new HistoryComparer() {
+      @Override
       public String getFileContent(String filePath) {
         if (filePath.equals("TestFolder/FileOne"))
           return "this is file one";
@@ -65,11 +75,11 @@ public class HistoryComparerTest {
   @Test
   public void shouldKnowIfTheTwoFilesAreTheSameFile() throws Exception {
     FileUtil.createFile("TestFolder/FileOne", "this is file one");
-    boolean compareWorked = comparer.compare("TestFolder/FileOne", "TestFolder/FileOne");
+    boolean compareWorked = comparer.compare("TestFolder/FileOne",
+        "TestFolder/FileOne");
     assertFalse(compareWorked);
     FileUtil.deleteFileSystemDirectory("TestFolder");
   }
-
 
   @Test
   public void shouldCompareTwoSetsOfTables() throws Exception {
@@ -95,36 +105,41 @@ public class HistoryComparerTest {
   public void findMatchScoreByFirstIndex() throws Exception {
     comparer.matchedTables.add(new HistoryComparer.MatchedPair(1, 2, 1.1));
     comparer.matchedTables.add(new HistoryComparer.MatchedPair(3, 4, 1.0));
-    assertEquals(1.1,comparer.findScoreByFirstTableIndex(1),.0001);
-    assertEquals(1.0,comparer.findScoreByFirstTableIndex(3),.0001);
+    assertEquals(1.1, comparer.findScoreByFirstTableIndex(1), .0001);
+    assertEquals(1.0, comparer.findScoreByFirstTableIndex(3), .0001);
   }
 
   @Test
-  public void shouldBeAbleToFindMatchScoreByFirstIndexAndReturnAPercentString() throws Exception {
+  public void shouldBeAbleToFindMatchScoreByFirstIndexAndReturnAPercentString()
+      throws Exception {
     comparer.matchedTables.add(new HistoryComparer.MatchedPair(1, 2, 1.1));
     comparer.matchedTables.add(new HistoryComparer.MatchedPair(3, 4, 1.0));
-    assertSubString("91.67",comparer.findScoreByFirstTableIndexAsStringAsPercent(1));
-    assertSubString("83.33",comparer.findScoreByFirstTableIndexAsStringAsPercent(3));
+    assertSubString("91.67", comparer
+        .findScoreByFirstTableIndexAsStringAsPercent(1));
+    assertSubString("83.33", comparer
+        .findScoreByFirstTableIndexAsStringAsPercent(3));
   }
 
   @Test
-  public void shouldBeAbleToTellIfTableListsWereACompleteMatch() throws Exception {
-    assertFalse(comparer.allTablesMatch());    
+  public void shouldBeAbleToTellIfTableListsWereACompleteMatch()
+      throws Exception {
+    assertFalse(comparer.allTablesMatch());
     comparer.firstTableResults.add("A");
     comparer.firstTableResults.add("B");
     comparer.secondTableResults.add("A");
     comparer.secondTableResults.add("B");
-    comparer.matchedTables.add(new HistoryComparer.MatchedPair(0, 0, HistoryComparer.MAX_MATCH_SCORE));
+    comparer.matchedTables.add(new HistoryComparer.MatchedPair(0, 0,
+        HistoryComparer.MAX_MATCH_SCORE));
     comparer.matchedTables.add(new HistoryComparer.MatchedPair(1, 1, 1.0));
     assertFalse(comparer.allTablesMatch());
     comparer.matchedTables.remove(new HistoryComparer.MatchedPair(1, 1, 1.0));
-    comparer.matchedTables.add(new HistoryComparer.MatchedPair(1, 1, HistoryComparer.MAX_MATCH_SCORE));
+    comparer.matchedTables.add(new HistoryComparer.MatchedPair(1, 1,
+        HistoryComparer.MAX_MATCH_SCORE));
     assertTrue(comparer.allTablesMatch());
     comparer.firstTableResults.add("C");
     assertFalse(comparer.allTablesMatch());
-    
-  }
 
+  }
 
   @Test
   public void shouldBeAbleToLineUpMisMatchedTables() throws Exception {
@@ -141,7 +156,8 @@ public class HistoryComparerTest {
     comparer.matchedTables.add(new HistoryComparer.MatchedPair(3, 4, 1.0));
     comparer.lineUpTheTables();
     assertEquals("A", comparer.firstTableResults.get(0));
-    assertEquals("<table><tr><td></td></tr></table>", comparer.firstTableResults.get(1));
+    assertEquals("<table><tr><td></td></tr></table>",
+        comparer.firstTableResults.get(1));
     assertEquals("B", comparer.firstTableResults.get(2));
     assertEquals("D", comparer.firstTableResults.get(4));
 
@@ -166,12 +182,16 @@ public class HistoryComparerTest {
     comparer.lineUpTheTables();
     assertEquals("A", comparer.firstTableResults.get(0));
     assertEquals("B", comparer.firstTableResults.get(1));
-    assertEquals("<table><tr><td></td></tr></table>", comparer.firstTableResults.get(3));
-    assertEquals("<table><tr><td></td></tr></table>", comparer.firstTableResults.get(4));
+    assertEquals("<table><tr><td></td></tr></table>",
+        comparer.firstTableResults.get(3));
+    assertEquals("<table><tr><td></td></tr></table>",
+        comparer.firstTableResults.get(4));
     assertEquals("D", comparer.firstTableResults.get(5));
-    assertEquals("<table><tr><td></td></tr></table>", comparer.firstTableResults.get(6));
+    assertEquals("<table><tr><td></td></tr></table>",
+        comparer.firstTableResults.get(6));
 
-    assertEquals("<table><tr><td></td></tr></table>", comparer.secondTableResults.get(0));
+    assertEquals("<table><tr><td></td></tr></table>",
+        comparer.secondTableResults.get(0));
     assertEquals("B", comparer.secondTableResults.get(1));
     assertEquals("Y", comparer.secondTableResults.get(3));
     assertEquals("Z", comparer.secondTableResults.get(4));
@@ -180,7 +200,8 @@ public class HistoryComparerTest {
   }
 
   @Test
-  public void shouldGuarenteeThatBothResultFilesAreTheSameLength() throws Exception {
+  public void shouldGuarenteeThatBothResultFilesAreTheSameLength()
+      throws Exception {
     comparer.firstTableResults.add("A");
     comparer.firstTableResults.add("B");
     comparer.firstTableResults.add("C");
@@ -188,9 +209,12 @@ public class HistoryComparerTest {
     comparer.secondTableResults.add("X");
     comparer.secondTableResults.add("Y");
     comparer.lineUpTheTables();
-    assertEquals(comparer.firstTableResults.size(), comparer.secondTableResults.size());
-    assertEquals("<table><tr><td></td></tr></table>", comparer.secondTableResults.get(2));
-    assertEquals("<table><tr><td></td></tr></table>", comparer.secondTableResults.get(3));
+    assertEquals(comparer.firstTableResults.size(), comparer.secondTableResults
+        .size());
+    assertEquals("<table><tr><td></td></tr></table>",
+        comparer.secondTableResults.get(2));
+    assertEquals("<table><tr><td></td></tr></table>",
+        comparer.secondTableResults.get(3));
   }
 
   @Test
@@ -205,20 +229,26 @@ public class HistoryComparerTest {
     comparer.matchedTables.add(new HistoryComparer.MatchedPair(1, 1, 1.0));
     comparer.lineUpTheTables();
     comparer.addBlanksToUnmatchingRows();
-    assertEquals(comparer.firstTableResults.size(), comparer.secondTableResults.size());
+    assertEquals(comparer.firstTableResults.size(), comparer.secondTableResults
+        .size());
     assertEquals("A", comparer.firstTableResults.get(0));
-    assertEquals("<table><tr><td></td></tr></table>", comparer.firstTableResults.get(1));
+    assertEquals("<table><tr><td></td></tr></table>",
+        comparer.firstTableResults.get(1));
     assertEquals("B", comparer.firstTableResults.get(2));
     assertEquals("C", comparer.firstTableResults.get(3));
-    assertEquals("<table><tr><td></td></tr></table>", comparer.firstTableResults.get(4));
+    assertEquals("<table><tr><td></td></tr></table>",
+        comparer.firstTableResults.get(4));
     assertEquals("D", comparer.firstTableResults.get(5));
 
-    assertEquals("<table><tr><td></td></tr></table>", comparer.secondTableResults.get(0));
+    assertEquals("<table><tr><td></td></tr></table>",
+        comparer.secondTableResults.get(0));
     assertEquals("X", comparer.secondTableResults.get(1));
     assertEquals("B", comparer.secondTableResults.get(2));
-    assertEquals("<table><tr><td></td></tr></table>", comparer.secondTableResults.get(3));
+    assertEquals("<table><tr><td></td></tr></table>",
+        comparer.secondTableResults.get(3));
     assertEquals("Y", comparer.secondTableResults.get(4));
-    assertEquals("<table><tr><td></td></tr></table>", comparer.secondTableResults.get(5));
+    assertEquals("<table><tr><td></td></tr></table>",
+        comparer.secondTableResults.get(5));
   }
 
   @Test
@@ -231,8 +261,10 @@ public class HistoryComparerTest {
     comparer.secondTableResults.add("B");
     comparer.secondTableResults.add("Y");
     comparer.secondTableResults.add("D");
-    comparer.matchedTables.add(new HistoryComparer.MatchedPair(1, 1, HistoryComparer.MAX_MATCH_SCORE));
-    comparer.matchedTables.add(new HistoryComparer.MatchedPair(3, 3, HistoryComparer.MAX_MATCH_SCORE));
+    comparer.matchedTables.add(new HistoryComparer.MatchedPair(1, 1,
+        HistoryComparer.MAX_MATCH_SCORE));
+    comparer.matchedTables.add(new HistoryComparer.MatchedPair(3, 3,
+        HistoryComparer.MAX_MATCH_SCORE));
     comparer.lineUpTheTables();
     comparer.addBlanksToUnmatchingRows();
     comparer.makePassFailResultsFromMatches();
@@ -245,39 +277,39 @@ public class HistoryComparerTest {
 
   }
 
-
   @Test
-  public void compareShouldGetReportHtmlAndSetResultContentWithPassIfTheFilesWereTheSame() throws Exception {
+  public void compareShouldGetReportHtmlAndSetResultContentWithPassIfTheFilesWereTheSame()
+      throws Exception {
     HistoryComparer comparer = new HistoryComparer();
     FileUtil.createFile("TestFolder/FirstFile", firstContent);
     FileUtil.createFile("TestFolder/SecondFile", firstContent);
-    boolean worked = comparer.compare("TestFolder/FirstFile", "TestFolder/SecondFile");
+    boolean worked = comparer.compare("TestFolder/FirstFile",
+        "TestFolder/SecondFile");
     assertTrue(worked);
     String expectedResult = "pass";
-    assertEquals(expectedResult, HistoryComparer.resultContent.get(0));
-    assertEquals(expectedResult, HistoryComparer.resultContent.get(1));
+    assertEquals(expectedResult, comparer.resultContent.get(0));
+    assertEquals(expectedResult, comparer.resultContent.get(1));
   }
 
   @Test
-  public void compareShouldGetReportFileHtmlAndSetResultContentWithFailIfTheFilesDiffer() throws Exception {
+  public void compareShouldGetReportFileHtmlAndSetResultContentWithFailIfTheFilesDiffer()
+      throws Exception {
     HistoryComparer comparer = new HistoryComparer();
     FileUtil.createFile("TestFolder/FirstFile", firstContent);
     FileUtil.createFile("TestFolder/SecondFile", secondContent);
-    boolean worked = comparer.compare("TestFolder/FirstFile", "TestFolder/SecondFile");
+    boolean worked = comparer.compare("TestFolder/FirstFile",
+        "TestFolder/SecondFile");
     assertTrue(worked);
-    assertEquals("pass", HistoryComparer.resultContent.get(0));
-    assertEquals("fail", HistoryComparer.resultContent.get(1));
+    assertEquals("pass", comparer.resultContent.get(0));
+    assertEquals("fail", comparer.resultContent.get(1));
   }
 
   public String generateHtmlFromWiki(String passOrFail) throws Exception {
     PageCrawler crawler = root.getPageCrawler();
-    String pageText =
-      "|myTable|\n" +
-        "La la\n" +
-        "|NewTable|\n" +
-        "|!style_" + passOrFail + "(a)|b|c|\n" +
-        "La la la";
-    WikiPage myPage = crawler.addPage(root, PathParser.parse("MyPage"), pageText);
+    String pageText = "|myTable|\n" + "La la\n" + "|NewTable|\n" + "|!style_"
+        + passOrFail + "(a)|b|c|\n" + "La la la";
+    WikiPage myPage = crawler.addPage(root, PathParser.parse("MyPage"),
+        pageText);
     PageData myData = myPage.getData();
     String html = myData.getHtml();
     return html;

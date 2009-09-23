@@ -27,7 +27,7 @@ public abstract class Response {
     return df;
   }
 
-  private int status = 200;
+  private int status = ReasonCodes.OK;
   private HashMap<String, String> headers = new HashMap<String, String>(17);
   private String contentType = DEFAULT_CONTENT_TYPE;
 
@@ -134,12 +134,16 @@ public abstract class Response {
     return getReasonPhrase(status);
   }
 
+  public static class ReasonCodes {
+    public static final int OK = 200;
+  }
+
   private static Map<Integer, String> reasonCodes = new HashMap<Integer, String>() {
     private static final long serialVersionUID = 1L;
     {
       put(100, "Continue");
       put(101, "Switching Protocols");
-      put(200, "OK");
+      put(ReasonCodes.OK, "OK");
       put(201, "Created");
       put(202, "Accepted");
       put(203, "Non-Authoritative Information");

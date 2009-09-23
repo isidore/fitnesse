@@ -7,7 +7,7 @@ import java.util.List;
 import util.RegexTestCase;
 import fitnesse.FitNesseContext;
 import fitnesse.Responder;
-import fitnesse.http.MockRequest;
+import fitnesse.http.SettableRequest;
 import fitnesse.http.Response;
 import fitnesse.testutil.FitNesseUtil;
 import fitnesse.wiki.InMemoryPage;
@@ -22,7 +22,7 @@ import fitnesse.wiki.WikiPageProperties;
 public class SavePropertiesResponderTest extends RegexTestCase {
   private WikiPage root;
 
-  private MockRequest request;
+  private SettableRequest request;
 
   private WikiPage page;
 
@@ -40,7 +40,7 @@ public class SavePropertiesResponderTest extends RegexTestCase {
   private void createRequest() throws Exception {
     page = crawler.addPage(root, PathParser.parse("PageOne"));
 
-    request = new MockRequest();
+    request = new SettableRequest();
     request.addInput("PageType", "Test");
     request.addInput("Properties", "on");
     request.addInput("Search", "on");
@@ -60,7 +60,7 @@ public class SavePropertiesResponderTest extends RegexTestCase {
 
     // new request to get rid of the virtual wiki link
     SavePropertiesResponder responder = new SavePropertiesResponder();
-    request = new MockRequest();
+    request = new SettableRequest();
     request.addInput(WikiPageProperties.VIRTUAL_WIKI_ATTRIBUTE, "");
     request.setResource("LinkerPage");
     responder.makeResponse(new FitNesseContext(root), request);
@@ -89,7 +89,7 @@ public class SavePropertiesResponderTest extends RegexTestCase {
 
     // new request to get rid of the virtual wiki link
     SavePropertiesResponder responder = new SavePropertiesResponder();
-    request = new MockRequest();
+    request = new SettableRequest();
     request.addInput(WikiPageProperties.VIRTUAL_WIKI_ATTRIBUTE, "http://localhost:" + FitNesseUtil.port
       + "/LinkeePageTwo");
     request.setResource("LinkerPage");

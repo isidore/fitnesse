@@ -6,7 +6,7 @@ import junit.framework.TestCase;
 import fitnesse.FitNesse;
 import fitnesse.FitNesseContext;
 import fitnesse.authentication.AlwaysSecureOperation;
-import fitnesse.http.MockRequest;
+import fitnesse.http.SettableRequest;
 import fitnesse.http.RequestBuilder;
 import fitnesse.http.ResponseParser;
 import fitnesse.testutil.FitNesseUtil;
@@ -30,7 +30,7 @@ public class ShutdownResponderTest extends TestCase {
 
   public void testFitNesseGetsShutdown() throws Exception {
     ShutdownResponder responder = new ShutdownResponder();
-    responder.makeResponse(context, new MockRequest());
+    responder.makeResponse(context, new SettableRequest());
     Thread.sleep(200);
     assertFalse(fitnesse.isRunning());
   }

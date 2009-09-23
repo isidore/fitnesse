@@ -7,7 +7,7 @@ import java.io.File;
 import junit.framework.TestCase;
 import util.FileUtil;
 import fitnesse.FitNesseContext;
-import fitnesse.http.MockRequest;
+import fitnesse.http.SettableRequest;
 import fitnesse.http.Response;
 
 public class CreateDirectoryResponderTest extends TestCase {
@@ -24,7 +24,7 @@ public class CreateDirectoryResponderTest extends TestCase {
     FitNesseContext context = new FitNesseContext();
     context.rootPagePath = "testdir";
     CreateDirectoryResponder responder = new CreateDirectoryResponder();
-    MockRequest request = new MockRequest();
+    SettableRequest request = new SettableRequest();
     request.addInput("dirname", "subdir");
     request.setResource("");
 

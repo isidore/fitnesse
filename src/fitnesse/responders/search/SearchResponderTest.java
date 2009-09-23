@@ -5,7 +5,7 @@ package fitnesse.responders.search;
 import util.RegexTestCase;
 import fitnesse.FitNesseContext;
 import fitnesse.testutil.FitNesseUtil;
-import fitnesse.http.MockRequest;
+import fitnesse.http.SettableRequest;
 import fitnesse.http.MockResponseSender;
 import fitnesse.http.Response;
 import fitnesse.wiki.InMemoryPage;
@@ -17,7 +17,7 @@ public class SearchResponderTest extends RegexTestCase {
   private WikiPage root;
   private PageCrawler crawler;
   private SearchResponder responder;
-  private MockRequest request;
+  private SettableRequest request;
   private FitNesseContext context;
 
   public void setUp() throws Exception {
@@ -25,7 +25,7 @@ public class SearchResponderTest extends RegexTestCase {
     crawler = root.getPageCrawler();
     crawler.addPage(root, PathParser.parse("SomePage"), "has something in it");
     responder = new SearchResponder();
-    request = new MockRequest();
+    request = new SettableRequest();
     request.addInput("searchString", "blah");
     request.addInput("searchType", "blah");
     context = FitNesseUtil.makeTestContext(root);

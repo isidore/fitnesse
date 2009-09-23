@@ -6,7 +6,7 @@ import util.RegexTestCase;
 import fitnesse.FitNesseContext;
 import fitnesse.html.HtmlTag;
 import fitnesse.html.HtmlUtil;
-import fitnesse.http.MockRequest;
+import fitnesse.http.SettableRequest;
 import fitnesse.http.SimpleResponse;
 import fitnesse.wiki.InMemoryPage;
 import fitnesse.wiki.PageCrawler;
@@ -15,14 +15,14 @@ import fitnesse.wiki.WikiPage;
 
 public class EditResponderTest extends RegexTestCase {
   private WikiPage root;
-  private MockRequest request;
+  private SettableRequest request;
   private EditResponder responder;
   private PageCrawler crawler;
 
   public void setUp() throws Exception {
     root = InMemoryPage.makeRoot("root");
     crawler = root.getPageCrawler();
-    request = new MockRequest();
+    request = new SettableRequest();
     responder = new EditResponder();
   }
 

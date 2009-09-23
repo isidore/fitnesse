@@ -2,7 +2,7 @@ package fitnesse.responders;
 
 import fitnesse.FitNesseContext;
 import fitnesse.Responder;
-import fitnesse.http.MockRequest;
+import fitnesse.http.SettableRequest;
 import fitnesse.http.SimpleResponse;
 import fitnesse.wiki.*;
 import org.junit.Before;
@@ -17,7 +17,7 @@ public class AddChildPageResponderTest {
   private String childName;
   private String childContent;
   private String pagetype;
-  private MockRequest request;
+  private SettableRequest request;
   private FitNesseContext context;
   private Responder responder;
   private WikiPagePath path;
@@ -30,7 +30,7 @@ public class AddChildPageResponderTest {
     childName = "ChildPage";
     childContent = "child content";
     pagetype = "";
-    request = new MockRequest();
+    request = new SettableRequest();
     request.setResource("TestPage");
     request.addInput("name", childName);
     request.addInput("content", childContent);
@@ -84,8 +84,8 @@ public class AddChildPageResponderTest {
     assertSubString("Invalid Child Name", response.getContent());
   }
 
-  private MockRequest makeInvalidRequest(String name) {
-    MockRequest request = new MockRequest();
+  private SettableRequest makeInvalidRequest(String name) {
+    SettableRequest request = new SettableRequest();
     request.setResource("TestPage");
     request.addInput("name", name);
     request.addInput("content", "hello");

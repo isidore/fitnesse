@@ -10,7 +10,7 @@ import fitnesse.FitNesseContext;
 import fitnesse.Responder;
 import fitnesse.html.HtmlPage;
 import fitnesse.html.HtmlPageFactory;
-import fitnesse.http.MockRequest;
+import fitnesse.http.SettableRequest;
 import fitnesse.http.SimpleResponse;
 import fitnesse.testutil.FitNesseUtil;
 import fitnesse.wiki.BaseWikiPage;
@@ -108,7 +108,7 @@ public class WikiImportPropertyTest extends RegexTestCase {
   }
 
   private SimpleResponse requestPage(String name) throws Exception {
-    MockRequest request = new MockRequest();
+    SettableRequest request = new SettableRequest();
     request.setResource(name);
     Responder responder = new WikiPageResponder();
     return (SimpleResponse) responder.makeResponse(new FitNesseContext(root), request);

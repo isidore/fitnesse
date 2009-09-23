@@ -6,7 +6,7 @@ import static util.RegexTestCase.*;
 import fitnesse.FitNesseContext;
 import fitnesse.Responder;
 import fitnesse.components.SaveRecorder;
-import fitnesse.http.MockRequest;
+import fitnesse.http.SettableRequest;
 import fitnesse.http.MockResponseSender;
 import fitnesse.http.Response;
 import fitnesse.http.SimpleResponse;
@@ -22,7 +22,7 @@ import org.junit.Test;
 public class SaveResponderTest {
   private WikiPage root;
   private Response response;
-  public MockRequest request;
+  public SettableRequest request;
   public Responder responder;
   private PageCrawler crawler;
 
@@ -30,7 +30,7 @@ public class SaveResponderTest {
   public void setUp() throws Exception {
     root = InMemoryPage.makeRoot("RooT");
     crawler = root.getPageCrawler();
-    request = new MockRequest();
+    request = new SettableRequest();
     responder = new SaveResponder();
     SaveResponder.contentFilter = null;
     SaveRecorder.clear();

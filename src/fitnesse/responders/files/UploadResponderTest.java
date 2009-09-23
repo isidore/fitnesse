@@ -7,14 +7,14 @@ import java.io.File;
 import junit.framework.TestCase;
 import util.FileUtil;
 import fitnesse.FitNesseContext;
-import fitnesse.http.MockRequest;
+import fitnesse.http.SettableRequest;
 import fitnesse.http.Response;
 import fitnesse.http.UploadedFile;
 
 public class UploadResponderTest extends TestCase {
   private FitNesseContext context;
   private UploadResponder responder;
-  private MockRequest request;
+  private SettableRequest request;
   private File testFile;
 
   public void setUp() throws Exception {
@@ -25,7 +25,7 @@ public class UploadResponderTest extends TestCase {
     testFile = FileUtil.createFile("testdir/tempFile.txt", "test content");
 
     responder = new UploadResponder();
-    request = new MockRequest();
+    request = new SettableRequest();
   }
 
   public void tearDown() throws Exception {

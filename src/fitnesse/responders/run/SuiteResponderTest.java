@@ -3,7 +3,7 @@
 package fitnesse.responders.run;
 
 import fitnesse.FitNesseContext;
-import fitnesse.http.MockRequest;
+import fitnesse.http.SettableRequest;
 import fitnesse.http.MockResponseSender;
 import fitnesse.http.Response;
 import static fitnesse.responders.run.TestResponderTest.XmlTestUtilities.assertCounts;
@@ -26,7 +26,7 @@ import java.io.File;
 import java.io.FileInputStream;
 
 public class SuiteResponderTest {
-  private MockRequest request;
+  private SettableRequest request;
   private SuiteResponder responder;
   private WikiPage root;
   private WikiPage suite;
@@ -52,7 +52,7 @@ public class SuiteResponderTest {
     suite = crawler.addPage(root, PathParser.parse(suitePageName), "This is the test suite\n");
     addTestToSuite("TestOne", fitPassFixture);
 
-    request = new MockRequest();
+    request = new SettableRequest();
     request.setResource(suitePageName);
     responder = new SuiteResponder();
     responder.turnOffChunkingForTests();

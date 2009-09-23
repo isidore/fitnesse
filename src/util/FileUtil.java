@@ -2,20 +2,36 @@
 // Released under the terms of the CPL Common Public License version 1.0.
 package util;
 
-import java.io.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 public class FileUtil {
   public static final String ENDL = System.getProperty("line.separator");
 
   public static File createFile(String path, String content) {
-    String names[] = path.split("/");
+    String seperator = path.contains("/") ? "/" : "\\\\";
+    String names[] = path.split(seperator);
     if (names.length == 1)
       return createFile(new File(path), content);
     else {
       File parent = null;
       for (int i = 0; i < names.length - 1; i++) {
-        parent = parent == null ? new File(names[i]) : new File(parent, names[i]);
+        parent = parent == null ? new File(names[i]) : new File(parent,
+            names[i]);
         if (!parent.exists())
           parent.mkdir();
       }
@@ -29,11 +45,9 @@ public class FileUtil {
     try {
       fileOutput = new FileOutputStream(file);
       fileOutput.write(content.getBytes());
-    }
-    catch (IOException e) {
+    } catch (IOException e) {
       throw new RuntimeException(e);
-    }
-    finally {
+    } finally {
       if (fileOutput != null)
         try {
           fileOutput.close();
@@ -73,7 +87,8 @@ public class FileUtil {
     if (!file.exists())
       return;
     if (!file.delete())
-      throw new RuntimeException("Could not delete '" + file.getAbsoluteFile() + "'");
+      throw new RuntimeException("Could not delete '" + file.getAbsoluteFile()
+          + "'");
     waitUntilFileDeleted(file);
   }
 
@@ -86,8 +101,7 @@ public class FileUtil {
       }
       try {
         Thread.sleep(500);
-      }
-      catch (InterruptedException e) {
+      } catch (InterruptedException e) {
       }
     }
   }
@@ -114,7 +128,8 @@ public class FileUtil {
     }
   }
 
-  public static LinkedList<String> getFileLines(String filename) throws Exception {
+  public static LinkedList<String> getFileLines(String filename)
+      throws Exception {
     return getFileLines(new File(filename));
   }
 
@@ -129,11 +144,13 @@ public class FileUtil {
     return lines;
   }
 
-  public static void writeLinesToFile(String filename, List<?> lines) throws Exception {
+  public static void writeLinesToFile(String filename, List<?> lines)
+      throws Exception {
     writeLinesToFile(new File(filename), lines);
   }
 
-  public static void writeLinesToFile(File file, List<?> lines) throws Exception {
+  public static void writeLinesToFile(File file, List<?> lines)
+      throws Exception {
     PrintStream output = new PrintStream(new FileOutputStream(file));
     for (Iterator<?> iterator = lines.iterator(); iterator.hasNext();) {
       String line = (String) iterator.next();
@@ -142,7 +159,8 @@ public class FileUtil {
     output.close();
   }
 
-  public static void copyBytes(InputStream input, OutputStream output) throws Exception {
+  public static void copyBytes(InputStream input, OutputStream output)
+      throws Exception {
     StreamReader reader = new StreamReader(input);
     while (!reader.isEof())
       output.write(reader.readBytes(1000));
@@ -168,21 +186,27 @@ public class FileUtil {
     List<File> fileList = new LinkedList<File>();
     fileList.addAll(dirSet);
     fileList.addAll(fileSet);
-    return fileList.toArray(new File[]{});
+    return fileList.toArray(new File[] {});
   }
 
   public static String buildPath(String[] parts) {
-    return StringUtil.join(Arrays.asList(parts), System.getProperty("file.separator"));
+    return StringUtil.join(Arrays.asList(parts), System
+        .getProperty("file.separator"));
   }
 
   public static List<String> breakFilenameIntoParts(String fileName) {
-    List<String> parts = new ArrayList<String>(Arrays.asList(fileName.split("/")));
+    List<String> parts = new ArrayList<String>(Arrays.asList(fileName
+        .split("/")));
     return parts;
   }
 
   public static String getPathOfFile(String fileName) {
     List<String> parts = breakFilenameIntoParts(fileName);
-    parts.remove(parts.size()-1);
+    parts.remove(parts.size() - 1);
     return buildPath(parts.toArray(new String[parts.size()]));
+  }
+
+  public static String useCorrectPathSeperator(String string) {
+    return string.replace('/', File.separatorChar);
   }
 }

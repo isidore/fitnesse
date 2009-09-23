@@ -15,7 +15,7 @@ import org.junit.Test;
 
 import util.FileUtil;
 import fitnesse.FitNesseContext;
-import fitnesse.http.MockRequest;
+import fitnesse.http.SettableRequest;
 import fitnesse.http.SimpleResponse;
 import fitnesse.testutil.FitNesseUtil;
 import fitnesse.wiki.InMemoryPage;
@@ -25,7 +25,7 @@ public class HistoryComparerResponderTest {
   public HistoryComparerResponder responder;
   public FitNesseContext context;
   public WikiPage root;
-  public MockRequest request;
+  public SettableRequest request;
   public HistoryComparer mockedComparer;
   private final String FIRST_FILE_PATH = "./TestDir/files/testResults/TestFolder/firstFakeFile"
       .replace('/', File.separatorChar);
@@ -34,7 +34,7 @@ public class HistoryComparerResponderTest {
 
   @Before
   public void setup() throws Exception {
-    request = new MockRequest();
+    request = new SettableRequest();
     mockedComparer = mock(HistoryComparer.class);
 
     responder = new HistoryComparerResponder(mockedComparer);
@@ -64,13 +64,6 @@ public class HistoryComparerResponderTest {
   }
 
   @Test
-  public void shouldBeAbleToMakeASimpleResponse() throws Exception {
-    SimpleResponse response = (SimpleResponse) responder.makeResponse(context,
-        request);
-    assertEquals(200, response.getStatus());
-  }
-
-  @Test
   public void shouldGetTwoHistoryFilesFromRequest() throws Exception {
     responder.makeResponse(context, request);
     verify(mockedComparer).compare(FIRST_FILE_PATH, SECOND_FILE_PATH);
@@ -90,7 +83,7 @@ public class HistoryComparerResponderTest {
 
   @Test
   public void shouldReturnErrorPageIfFilesAreInvalid() throws Exception {
-    request = new MockRequest();
+    request = new SettableRequest();
     request.addInput("TestResult_firstFile", "");
     request.addInput("TestResult_secondFile", "");
     request.setResource("TestFolder");
@@ -104,7 +97,7 @@ public class HistoryComparerResponderTest {
   @Test
   public void shouldReturnErrorPageIfThereAreTooFewInputFiles()
       throws Exception {
-    request = new MockRequest();
+    request = new SettableRequest();
     request.addInput("TestResult_firstFile", "");
     request.setResource("TestFolder");
     SimpleResponse response = (SimpleResponse) responder.makeResponse(context,

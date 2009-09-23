@@ -20,13 +20,13 @@ import util.RegexTestCase;
 import fitnesse.FitNesseContext;
 import fitnesse.Responder;
 import fitnesse.http.InputStreamResponse;
-import fitnesse.http.MockRequest;
+import fitnesse.http.SettableRequest;
 import fitnesse.http.MockResponseSender;
 import fitnesse.http.Response;
 import fitnesse.http.SimpleResponse;
 
 public class FileResponderTest {
-  MockRequest request;
+  SettableRequest request;
   private final String HTTP_DATE_REGEXP = "[SMTWF][a-z]{2}\\,\\s[0-9]{2}\\s[JFMASOND][a-z]{2}\\s[0-9]{4}\\s[0-9]{2}\\:[0-9]{2}\\:[0-9]{2}\\sGMT";
   private Response response;
   private FitNesseContext context;
@@ -36,7 +36,7 @@ public class FileResponderTest {
 
   @Before
   public void setUp() throws Exception {
-    request = new MockRequest();
+    request = new SettableRequest();
     context = new FitNesseContext();
     context.rootPagePath = SampleFileUtility.base;
     SampleFileUtility.makeSampleFiles();

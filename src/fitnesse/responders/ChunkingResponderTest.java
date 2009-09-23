@@ -4,7 +4,7 @@ package fitnesse.responders;
 
 import util.RegexTestCase;
 import fitnesse.FitNesseContext;
-import fitnesse.http.MockRequest;
+import fitnesse.http.SettableRequest;
 import fitnesse.http.MockResponseSender;
 import fitnesse.http.Response;
 import fitnesse.wiki.WikiPage;
@@ -29,7 +29,7 @@ public class ChunkingResponderTest extends RegexTestCase {
 
   public void testException() throws Exception {
     exception = new Exception("test exception");
-    response = responder.makeResponse(context, new MockRequest());
+    response = responder.makeResponse(context, new SettableRequest());
     MockResponseSender sender = new MockResponseSender();
     sender.doSending(response);
     String responseSender = sender.sentData();

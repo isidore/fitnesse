@@ -3,7 +3,7 @@ package fitnesse.authentication;
 import fitnesse.FitNesseContext;
 import fitnesse.Responder;
 import fitnesse.components.Base64;
-import fitnesse.http.MockRequest;
+import fitnesse.http.SettableRequest;
 import fitnesse.http.Request;
 import fitnesse.http.SimpleResponse;
 import fitnesse.testutil.FitNesseUtil;
@@ -63,7 +63,7 @@ public class NegotiateAuthenticatorTest {
     WikiPage root = InMemoryPage.makeRoot("RooT");
     FitNesseContext context = FitNesseUtil.makeTestContext(root);
     Responder responder = new NegotiateAuthenticator.UnauthenticatedNegotiateResponder("token");
-    Request request = new MockRequest();
+    Request request = new SettableRequest();
     SimpleResponse response = (SimpleResponse) responder.makeResponse(context, request);
     assertEquals("Negotiate token", response.getHeader("WWW-Authenticate"));
     String content = response.getContent();
@@ -83,7 +83,7 @@ public class NegotiateAuthenticatorTest {
 
   @Test
   public void noAuthorizationHeaderShouldProduceNullCredentials() throws Exception {
-    MockRequest request = new MockRequest();
+    SettableRequest request = new SettableRequest();
     NegotiateAuthenticator authenticator = new NegotiateAuthenticator(manager, properties);
     authenticator.negotiateCredentials(request);
     assertNull(request.getAuthorizationUsername());
@@ -92,7 +92,7 @@ public class NegotiateAuthenticatorTest {
 
   @Test
   public void invalidAuthorizationHeaderShouldProduceNullCredentials() throws Exception {
-    MockRequest request = new MockRequest();
+    SettableRequest request = new SettableRequest();
     request.addHeader("Authorization", "blah");
     NegotiateAuthenticator authenticator = new NegotiateAuthenticator(manager, properties);
     authenticator.negotiateCredentials(request);
@@ -107,13 +107,13 @@ public class NegotiateAuthenticatorTest {
     String encodedPassword = base64Encode(password);
     GSSContext gssContext = makeMockGssContext(userName, password);
     when(gssContext.isEstablished()).thenReturn(true);
-    MockRequest request = new MockRequest();
+    SettableRequest request = new SettableRequest();
     doNegotiation(request);
     assertEquals(userName, request.getAuthorizationUsername());
     assertEquals(encodedPassword, request.getAuthorizationPassword());
   }
 
-  private void doNegotiation(MockRequest request) throws Exception {
+  private void doNegotiation(SettableRequest request) throws Exception {
     request.addHeader("Authorization", NegotiateAuthenticator.NEGOTIATE + " " + TOKEN);
     NegotiateAuthenticator authenticator = new NegotiateAuthenticator(manager, properties);
     authenticator.negotiateCredentials(request);
@@ -137,7 +137,7 @@ public class NegotiateAuthenticatorTest {
     String encodedPassword = base64Encode(password);
     GSSContext gssContext = makeMockGssContext(userName, password);
     when(gssContext.isEstablished()).thenReturn(false);
-    MockRequest request = new MockRequest();
+    SettableRequest request = new SettableRequest();
     doNegotiation(request);
     assertNull(request.getAuthorizationUsername());
     assertEquals(encodedPassword, request.getAuthorizationPassword());
@@ -151,7 +151,7 @@ public class NegotiateAuthenticatorTest {
     String encodedPassword = base64Encode(password);
     GSSContext gssContext = makeMockGssContext(userName, password);
     when(gssContext.isEstablished()).thenReturn(true);
-    MockRequest request = new MockRequest();
+    SettableRequest request = new SettableRequest();
     doNegotiation(request);
     assertEquals("username", request.getAuthorizationUsername());
     assertEquals(encodedPassword, request.getAuthorizationPassword());

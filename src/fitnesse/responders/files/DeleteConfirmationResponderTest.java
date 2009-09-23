@@ -5,15 +5,15 @@ package fitnesse.responders.files;
 import util.RegexTestCase;
 import fitnesse.FitNesseContext;
 import fitnesse.Responder;
-import fitnesse.http.MockRequest;
+import fitnesse.http.SettableRequest;
 import fitnesse.http.SimpleResponse;
 
 public class DeleteConfirmationResponderTest extends RegexTestCase {
-  MockRequest request;
+  SettableRequest request;
   private FitNesseContext context;
 
   public void setUp() throws Exception {
-    request = new MockRequest();
+    request = new SettableRequest();
     context = new FitNesseContext();
   }
 

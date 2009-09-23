@@ -10,7 +10,7 @@ import util.RegexTestCase;
 import fit.Counts;
 import fit.FitProtocol;
 import fitnesse.FitNesseContext;
-import fitnesse.http.MockRequest;
+import fitnesse.http.SettableRequest;
 import fitnesse.http.MockResponseSender;
 import fitnesse.http.Response;
 import fitnesse.runner.HtmlResultFormatter;
@@ -75,7 +75,7 @@ public class TestResultFormattingResponderTest extends RegexTestCase {
   }
 
   public void testMakeResponse() throws Exception {
-    MockRequest request = new MockRequest();
+    SettableRequest request = new SettableRequest();
     ByteArrayOutputStream output = new ByteArrayOutputStream();
     FitProtocol.writeData(result1.toString(), output);
     FitProtocol.writeData(result2.toString(), output);
@@ -103,7 +103,7 @@ public class TestResultFormattingResponderTest extends RegexTestCase {
   }
 
   private void checkFormatterCreated(String format, Class<?> formatterClass) throws Exception {
-    MockRequest request = new MockRequest();
+    SettableRequest request = new SettableRequest();
     request.addHeader("Host", "locahost:8080");
     request.setResource("/");
     if (format != null)

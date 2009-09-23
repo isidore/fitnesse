@@ -7,7 +7,7 @@ import fitnesse.Responder;
 import fitnesse.authentication.SecureOperation;
 import fitnesse.authentication.SecureReadOperation;
 import fitnesse.authentication.SecureResponder;
-import fitnesse.http.MockRequest;
+import fitnesse.http.SettableRequest;
 import fitnesse.http.SimpleResponse;
 import fitnesse.testutil.FitNesseUtil;
 import fitnesse.wiki.InMemoryPage;
@@ -32,7 +32,7 @@ public class WikiPageResponderTest extends RegexTestCase {
 
   public void testResponse() throws Exception {
     crawler.addPage(root, PathParser.parse("ChildPage"), "child content");
-    final MockRequest request = new MockRequest();
+    final SettableRequest request = new SettableRequest();
     request.setResource("ChildPage");
 
     final Responder responder = new WikiPageResponder();
@@ -101,7 +101,7 @@ public class WikiPageResponderTest extends RegexTestCase {
   }
 
   private SimpleResponse requestPage(String name) throws Exception {
-    final MockRequest request = new MockRequest();
+    final SettableRequest request = new SettableRequest();
     request.setResource(name);
     final Responder responder = new WikiPageResponder();
     return (SimpleResponse) responder.makeResponse(context, request);

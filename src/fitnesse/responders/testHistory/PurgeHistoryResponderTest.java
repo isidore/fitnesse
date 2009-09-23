@@ -1,7 +1,7 @@
 package fitnesse.responders.testHistory;
 
 import fitnesse.FitNesseContext;
-import fitnesse.http.MockRequest;
+import fitnesse.http.SettableRequest;
 import fitnesse.http.Response;
 import fitnesse.http.SimpleResponse;
 import org.junit.After;
@@ -21,7 +21,7 @@ public class PurgeHistoryResponderTest {
   private TestHistory history;
   private FitNesseContext context;
   private PurgeHistoryResponder responder;
-  private MockRequest request;
+  private SettableRequest request;
 
 
   @Before
@@ -33,7 +33,7 @@ public class PurgeHistoryResponderTest {
     responder = new PurgeHistoryResponder();
     responder.setResultsDirectory(resultsDirectory);
     context = new FitNesseContext();
-    request = new MockRequest();
+    request = new SettableRequest();
     request.setResource("TestPage");
   }
 

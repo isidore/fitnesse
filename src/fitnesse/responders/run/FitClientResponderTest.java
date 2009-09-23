@@ -4,7 +4,7 @@ package fitnesse.responders.run;
 
 import util.RegexTestCase;
 import fitnesse.FitNesseContext;
-import fitnesse.http.MockRequest;
+import fitnesse.http.SettableRequest;
 import fitnesse.http.MockResponseSender;
 import fitnesse.http.Response;
 import fitnesse.wiki.InMemoryPage;
@@ -16,7 +16,7 @@ import fitnesse.wiki.WikiPage;
 public class FitClientResponderTest extends RegexTestCase {
   private WikiPage root;
   private FitClientResponder responder;
-  private MockRequest request;
+  private SettableRequest request;
   private FitNesseContext context;
   private Response response;
   private MockResponseSender sender;
@@ -26,7 +26,7 @@ public class FitClientResponderTest extends RegexTestCase {
   public void setUp() throws Exception {
     root = InMemoryPage.makeRoot("RooT");
     responder = new FitClientResponder();
-    request = new MockRequest();
+    request = new SettableRequest();
     context = new FitNesseContext(root);
 
     buildSuite(root);

@@ -1,0 +1,6 @@
+Port: 81 
+Root Path: directory
+RootDirectory: root
+LogDirectory: myLogDirectory
+Days Till Version Expire: 14 
+UserPassword File: null

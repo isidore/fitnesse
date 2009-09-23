@@ -5,7 +5,7 @@ package fitnesse.responders;
 import util.RegexTestCase;
 import fitnesse.FitNesseContext;
 import fitnesse.Responder;
-import fitnesse.http.MockRequest;
+import fitnesse.http.SettableRequest;
 import fitnesse.http.SimpleResponse;
 import fitnesse.wiki.InMemoryPage;
 import fitnesse.wiki.PathParser;
@@ -22,7 +22,7 @@ public class PageDataWikiPageResponderTest extends RegexTestCase {
 
   public void testGetPageData() throws Exception {
     Responder responder = new PageDataWikiPageResponder();
-    MockRequest request = new MockRequest();
+    SettableRequest request = new SettableRequest();
     request.setResource("PageOne");
     request.addInput("pageData", "");
     SimpleResponse response = (SimpleResponse) responder.makeResponse(new FitNesseContext(root), request);

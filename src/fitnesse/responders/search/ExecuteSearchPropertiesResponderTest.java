@@ -13,7 +13,7 @@ import org.junit.*;
 import util.RegexTestCase;
 import fitnesse.FitNesseContext;
 import fitnesse.testutil.FitNesseUtil;
-import fitnesse.http.MockRequest;
+import fitnesse.http.SettableRequest;
 import fitnesse.http.MockResponseSender;
 import fitnesse.http.Response;
 import fitnesse.wiki.InMemoryPage;
@@ -42,7 +42,7 @@ public class ExecuteSearchPropertiesResponderTest extends RegexTestCase {
   @Test
   public void testResponseWithNoParametersWillReturnEmptyPage()
   throws Exception {
-    MockRequest request = setupRequest();
+    SettableRequest request = setupRequest();
     String content = invokeResponder(request);
     assertSubString("Search Page Properties Results", content);
     assertSubString("No search properties", content);
@@ -51,7 +51,7 @@ public class ExecuteSearchPropertiesResponderTest extends RegexTestCase {
   @Test
   public void testResponseWithNoMatchesWillReturnEmptyPageList()
   throws Exception {
-    MockRequest request = setupRequest();
+    SettableRequest request = setupRequest();
     request.addInput(PAGE_TYPE_ATTRIBUTE, "Suite,Normal");
 
     String content = invokeResponder(request);
@@ -61,7 +61,7 @@ public class ExecuteSearchPropertiesResponderTest extends RegexTestCase {
 
   @Test
   public void testResponseWithMatchesWillReturnPageList() throws Exception {
-    MockRequest request = setupRequest();
+    SettableRequest request = setupRequest();
     request.addInput(PAGE_TYPE_ATTRIBUTE, TEST.toString());
 
     String content = invokeResponder(request);
@@ -79,14 +79,14 @@ public class ExecuteSearchPropertiesResponderTest extends RegexTestCase {
     assertOutputHasRowWithLabels("filter1,filter2");
   }
 
-  private String invokeResponder(MockRequest request) throws Exception {
+  private String invokeResponder(SettableRequest request) throws Exception {
     Response response = responder.makeResponse(context, request);
     MockResponseSender sender = new MockResponseSender();
     sender.doSending(response);
     return sender.sentData();
   }
 
-  private MockRequest setupRequest() throws Exception {
+  private SettableRequest setupRequest() throws Exception {
     WikiPage page = crawler.addPage(root, PathParser.parse("PageOne"));
     PageData data = page.getData();
     data.setContent("some content");
@@ -95,7 +95,7 @@ public class ExecuteSearchPropertiesResponderTest extends RegexTestCase {
     properties.set("Suites", "filter1,filter2");
     page.commit(data);
 
-    MockRequest request = new MockRequest();
+    SettableRequest request = new SettableRequest();
     request.setResource("PageOne");
     request.addInput("Action", "Any");
     request.addInput("Security", "Any");
@@ -129,7 +129,7 @@ public class ExecuteSearchPropertiesResponderTest extends RegexTestCase {
   }
 
   private void assertPageTypesMatch(PageType... pageTypes) {
-    MockRequest request = new MockRequest();
+    SettableRequest request = new SettableRequest();
     List<PageType> types = Arrays.asList(pageTypes);
     final String commaSeparatedPageTypes = buildPageTypeListForRequest(pageTypes);
     request.addInput(PAGE_TYPE_ATTRIBUTE, commaSeparatedPageTypes);
@@ -150,7 +150,7 @@ public class ExecuteSearchPropertiesResponderTest extends RegexTestCase {
 
   @Test
   public void testGetAttributesFromInput() {
-    MockRequest request = new MockRequest();
+    SettableRequest request = new SettableRequest();
     request.addInput(ACTION, "Edit");
 
     Map<String, Boolean> foundAttributes = responder.getAttributesFromInput(request);
@@ -165,7 +165,7 @@ public class ExecuteSearchPropertiesResponderTest extends RegexTestCase {
 
   @Test
   public void testPageTypesAreOrEd() throws Exception {
-    MockRequest request = setupRequest();
+    SettableRequest request = setupRequest();
     request.addInput(PAGE_TYPE_ATTRIBUTE, "Test,Suite");
 
     String content = invokeResponder(request);
@@ -185,7 +185,7 @@ public class ExecuteSearchPropertiesResponderTest extends RegexTestCase {
 
   @Test
   public void testPageMatchesWithObsoletePages() throws Exception {
-    MockRequest request = setupRequestForObsoletePage();
+    SettableRequest request = setupRequestForObsoletePage();
     request.addInput(PAGE_TYPE_ATTRIBUTE, "Test,Suite");
 
     String content = invokeResponder(request);
@@ -200,7 +200,7 @@ public class ExecuteSearchPropertiesResponderTest extends RegexTestCase {
     assertSubString("No pages", content);
   }
 
-  private MockRequest setupRequestForObsoletePage() throws Exception {
+  private SettableRequest setupRequestForObsoletePage() throws Exception {
     WikiPage page = crawler.addPage(root, PathParser.parse("ObsoletePage"));
     PageData data = page.getData();
     data.setContent("some content");
@@ -211,13 +211,13 @@ public class ExecuteSearchPropertiesResponderTest extends RegexTestCase {
     properties.set(PropertyPRUNE, "true");
     page.commit(data);
 
-    MockRequest request = setupRequest();
+    SettableRequest request = setupRequest();
     request.setResource("ObsoletePage");
     return request;
   }
 
   public void testFindJustObsoletePages() throws Exception {
-    MockRequest request = setupRequestForObsoletePage();
+    SettableRequest request = setupRequestForObsoletePage();
     request.addInput(PAGE_TYPE_ATTRIBUTE, "Test,Suite,Normal");
     request.addInput(SPECIAL, "obsolete");
 

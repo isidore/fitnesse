@@ -4,7 +4,7 @@ package fitnesse.fixtures;
 
 import fit.ColumnFixture;
 import fitnesse.FitNesseExpediter;
-import fitnesse.http.MockRequest;
+import fitnesse.http.SettableRequest;
 import fitnesse.http.MockResponseSender;
 import fitnesse.testutil.MockSocket;
 import fitnesse.wiki.PathParser;
@@ -16,14 +16,14 @@ public class ResponseRequester extends ColumnFixture {
   public String username;
   public String password;
 
-  protected MockRequest request;
+  protected SettableRequest request;
 
   public boolean valid() throws Exception {
     return status() == 200;
   }
 
   public void execute() throws Exception {
-    setRequest(new MockRequest());
+    setRequest(new SettableRequest());
 
     details();
 
@@ -67,7 +67,7 @@ public class ResponseRequester extends ColumnFixture {
     this.password = password;
   }
 
-  public void setRequest(MockRequest request) {
+  public void setRequest(SettableRequest request) {
     this.request = request;
   }
 }

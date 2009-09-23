@@ -5,7 +5,7 @@ package fitnesse.authentication;
 import junit.framework.TestCase;
 import fitnesse.FitNesseContext;
 import fitnesse.Responder;
-import fitnesse.http.MockRequest;
+import fitnesse.http.SettableRequest;
 import fitnesse.http.Request;
 import fitnesse.http.Response;
 import fitnesse.testutil.SimpleAuthenticator;
@@ -16,7 +16,7 @@ import fitnesse.wiki.WikiPage;
 public class AuthenticatorTest extends TestCase {
   SimpleAuthenticator authenticator;
   private WikiPage root;
-  private MockRequest request;
+  private SettableRequest request;
   private Responder responder;
   private Class<? extends Responder> responderType;
   private DummySecureResponder privilegedResponder;
@@ -45,7 +45,7 @@ public class AuthenticatorTest extends TestCase {
     authenticator = new SimpleAuthenticator();
     privilegedResponder = new DummySecureResponder();
 
-    request = new MockRequest();
+    request = new SettableRequest();
     request.setResource("FrontPage");
     context = new FitNesseContext(root);
   }

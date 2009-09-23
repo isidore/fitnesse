@@ -4,7 +4,7 @@ package fitnesse.authentication;
 
 import junit.framework.TestCase;
 import fitnesse.FitNesseContext;
-import fitnesse.http.MockRequest;
+import fitnesse.http.SettableRequest;
 import fitnesse.wiki.InMemoryPage;
 import fitnesse.wiki.PageCrawler;
 import fitnesse.wiki.PageData;
@@ -16,7 +16,7 @@ public class SecureOperationTest extends TestCase {
   private SecureReadOperation sro;
   private WikiPage root;
   FitNesseContext context;
-  private MockRequest request;
+  private SettableRequest request;
   private PageCrawler crawler;
   private WikiPagePath parentPagePath;
   private WikiPagePath childPagePath;
@@ -26,7 +26,7 @@ public class SecureOperationTest extends TestCase {
     context = new FitNesseContext();
     context.root = root;
     sro = new SecureReadOperation();
-    request = new MockRequest();
+    request = new SettableRequest();
     crawler = root.getPageCrawler();
     parentPagePath = PathParser.parse("ParentPage");
     childPagePath = PathParser.parse("ChildPage");

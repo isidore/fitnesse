@@ -153,4 +153,10 @@ public class HistoryComparerResponder implements Responder {
       String message) throws Exception {
     return new ErrorResponder(message).makeResponse(context, request);
   }
+
+  public void setTestComparer(HistoryComparer comparer) {
+    this.comparer = comparer;
+    testing = true; // Ignore encode filename info
+
+  }
 }

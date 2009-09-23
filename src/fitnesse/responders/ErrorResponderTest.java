@@ -5,13 +5,13 @@ package fitnesse.responders;
 import util.RegexTestCase;
 import fitnesse.FitNesseContext;
 import fitnesse.Responder;
-import fitnesse.http.MockRequest;
+import fitnesse.http.SettableRequest;
 import fitnesse.http.SimpleResponse;
 
 public class ErrorResponderTest extends RegexTestCase {
   public void testResponse() throws Exception {
     Responder responder = new ErrorResponder(new Exception("some error message"));
-    SimpleResponse response = (SimpleResponse) responder.makeResponse(new FitNesseContext(), new MockRequest());
+    SimpleResponse response = (SimpleResponse) responder.makeResponse(new FitNesseContext(), new SettableRequest());
 
     assertEquals(400, response.getStatus());
 
@@ -24,7 +24,7 @@ public class ErrorResponderTest extends RegexTestCase {
 
   public void testWithMessage() throws Exception {
     Responder responder = new ErrorResponder("error Message");
-    SimpleResponse response = (SimpleResponse) responder.makeResponse(new FitNesseContext(), new MockRequest());
+    SimpleResponse response = (SimpleResponse) responder.makeResponse(new FitNesseContext(), new SettableRequest());
     String body = response.getContent();
 
     assertSubString("error Message", body);

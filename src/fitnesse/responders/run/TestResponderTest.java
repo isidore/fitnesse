@@ -7,7 +7,7 @@ import fitnesse.FitNesseVersion;
 import fitnesse.authentication.SecureOperation;
 import fitnesse.authentication.SecureResponder;
 import fitnesse.authentication.SecureTestOperation;
-import fitnesse.http.MockRequest;
+import fitnesse.http.SettableRequest;
 import fitnesse.http.MockResponseSender;
 import fitnesse.http.Response;
 import static fitnesse.responders.run.TestResponderTest.XmlTestUtilities.assertCounts;
@@ -39,7 +39,7 @@ import java.util.regex.Pattern;
 
 public class TestResponderTest {
   private WikiPage root;
-  private MockRequest request;
+  private SettableRequest request;
   private TestResponder responder;
   private FitNesseContext context;
   private Response response;
@@ -59,7 +59,7 @@ public class TestResponderTest {
     root = InMemoryPage.makeRoot("RooT");
     crawler = root.getPageCrawler();
     errorLogsParentPage = crawler.addPage(root, PathParser.parse("ErrorLogs"));
-    request = new MockRequest();
+    request = new SettableRequest();
     responder = new TestResponder();
     responder.setFastTest(true);
     context = FitNesseUtil.makeTestContext(root);

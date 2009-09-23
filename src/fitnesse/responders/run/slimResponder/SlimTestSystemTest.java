@@ -10,7 +10,7 @@ import org.junit.Test;
 
 import fitnesse.FitNesseContext;
 import fitnesse.testutil.FitNesseUtil;
-import fitnesse.http.MockRequest;
+import fitnesse.http.SettableRequest;
 import fitnesse.http.SimpleResponse;
 import fitnesse.responders.run.TestSummary;
 import fitnesse.responders.run.TestSystemListener;
@@ -28,7 +28,7 @@ public class SlimTestSystemTest {
   private WikiPage root;
   private PageCrawler crawler;
   private FitNesseContext context;
-  private MockRequest request;
+  private SettableRequest request;
   protected SlimResponder responder;
   private WikiPage testPage;
   public String testResults;
@@ -54,7 +54,7 @@ public class SlimTestSystemTest {
     root = InMemoryPage.makeRoot("root");
     crawler = root.getPageCrawler();
     context = FitNesseUtil.makeTestContext(root);
-    request = new MockRequest();
+    request = new SettableRequest();
     responder = getSlimResponder();
     responder.setFastTest(true);
     testPage = crawler.addPage(root, PathParser.parse("TestPage"), "!path classes");

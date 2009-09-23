@@ -7,7 +7,7 @@ import org.json.JSONObject;
 import util.RegexTestCase;
 import fitnesse.FitNesseContext;
 import fitnesse.Responder;
-import fitnesse.http.MockRequest;
+import fitnesse.http.SettableRequest;
 import fitnesse.http.SimpleResponse;
 import fitnesse.responders.WikiImportProperty;
 import fitnesse.wiki.InMemoryPage;
@@ -24,7 +24,7 @@ public class PropertiesResponderTest extends RegexTestCase {
 
   private PageCrawler crawler;
 
-  private MockRequest request;
+  private SettableRequest request;
 
   private Responder responder;
 
@@ -44,7 +44,7 @@ public class PropertiesResponderTest extends RegexTestCase {
     properties.set(WikiPageProperties.VIRTUAL_WIKI_ATTRIBUTE, "http://www.fitnesse.org");
     page.commit(data);
 
-    MockRequest request = new MockRequest();
+    SettableRequest request = new SettableRequest();
     request.setResource("PageOne");
 
     Responder responder = new PropertiesResponder();
@@ -81,7 +81,7 @@ public class PropertiesResponderTest extends RegexTestCase {
     properties.set("Test", "true");
     page.commit(data);
 
-    MockRequest request = new MockRequest();
+    SettableRequest request = new SettableRequest();
     request.setResource("PageOne");
     request.addInput("format", "json");
 
@@ -139,7 +139,7 @@ public class PropertiesResponderTest extends RegexTestCase {
   }
 
   private WikiPage getPropertiesContentFromPage(WikiPage page) throws Exception {
-    request = new MockRequest();
+    request = new SettableRequest();
     request.setResource(page.getName());
     responder = new PropertiesResponder();
     SimpleResponse response = (SimpleResponse) responder.makeResponse(new FitNesseContext(root), request);

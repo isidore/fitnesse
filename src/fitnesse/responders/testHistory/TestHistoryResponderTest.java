@@ -1,7 +1,7 @@
 package fitnesse.responders.testHistory;
 
 import fitnesse.FitNesseContext;
-import fitnesse.http.MockRequest;
+import fitnesse.http.SettableRequest;
 import fitnesse.http.SimpleResponse;
 import fitnesse.responders.run.TestSummary;
 import static fitnesse.responders.testHistory.PageHistory.BarGraph;
@@ -43,7 +43,7 @@ public class TestHistoryResponderTest {
   }
 
   private void makeResponse() throws Exception {
-    response = (SimpleResponse) responder.makeResponse(context, new MockRequest());
+    response = (SimpleResponse) responder.makeResponse(context, new SettableRequest());
   }
 
   private void removeResultsDirectory() {
@@ -318,7 +318,7 @@ public class TestHistoryResponderTest {
 
   @Test
   public void shouldBeAbleToAcceptFormatIsXMLforARequest() throws Exception {
-    MockRequest request = new MockRequest();
+    SettableRequest request = new SettableRequest();
     request.addInput("format", "xml");
     response = (SimpleResponse) responder.makeResponse(context, request);
     assertHasRegexp("text/xml", response.getContentType());
@@ -326,7 +326,7 @@ public class TestHistoryResponderTest {
 
   @Test
   public void shouldntBeCaseSensitiveForXMLRequest() throws Exception {
-    MockRequest request = new MockRequest();
+    SettableRequest request = new SettableRequest();
     request.addInput("format", "xML");
     response = (SimpleResponse) responder.makeResponse(context, request);
     assertHasRegexp("text/xml", response.getContentType());

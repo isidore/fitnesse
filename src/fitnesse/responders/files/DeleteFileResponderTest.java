@@ -7,16 +7,16 @@ import java.io.File;
 import util.FileUtil;
 import util.RegexTestCase;
 import fitnesse.FitNesseContext;
-import fitnesse.http.MockRequest;
+import fitnesse.http.SettableRequest;
 import fitnesse.http.Response;
 
 public class DeleteFileResponderTest extends RegexTestCase {
-  public MockRequest request;
+  public SettableRequest request;
   private FitNesseContext context;
 
   public void setUp() {
     FileUtil.makeDir("testdir");
-    request = new MockRequest();
+    request = new SettableRequest();
     context = new FitNesseContext();
     context.rootPagePath = "testdir";
   }

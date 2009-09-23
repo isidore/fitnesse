@@ -5,14 +5,14 @@ package fitnesse.responders;
 import util.RegexTestCase;
 import fitnesse.FitNesseContext;
 import fitnesse.Responder;
-import fitnesse.http.MockRequest;
+import fitnesse.http.SettableRequest;
 import fitnesse.wiki.InMemoryPage;
 import fitnesse.wiki.PageCrawler;
 import fitnesse.wiki.WikiPage;
 
 public abstract class ResponderTestCase extends RegexTestCase {
   protected WikiPage root;
-  protected MockRequest request;
+  protected SettableRequest request;
   protected Responder responder;
   protected PageCrawler crawler;
   protected FitNesseContext context;
@@ -20,7 +20,7 @@ public abstract class ResponderTestCase extends RegexTestCase {
   public void setUp() throws Exception {
     root = InMemoryPage.makeRoot("RooT");
     crawler = root.getPageCrawler();
-    request = new MockRequest();
+    request = new SettableRequest();
     responder = responderInstance();
     context = new FitNesseContext(root);
   }

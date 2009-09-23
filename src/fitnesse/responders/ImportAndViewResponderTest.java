@@ -4,7 +4,7 @@ package fitnesse.responders;
 
 import junit.framework.TestCase;
 import fitnesse.FitNesseContext;
-import fitnesse.http.MockRequest;
+import fitnesse.http.SettableRequest;
 import fitnesse.http.Response;
 import fitnesse.testutil.FitNesseUtil;
 import fitnesse.wiki.PageData;
@@ -37,7 +37,7 @@ public class ImportAndViewResponderTest extends TestCase {
 
   private Response getResponse() throws Exception {
     FitNesseContext context = new FitNesseContext(testData.localRoot);
-    MockRequest request = new MockRequest();
+    SettableRequest request = new SettableRequest();
     request.setResource("PageTwo");
     return responder.makeResponse(context, request);
   }

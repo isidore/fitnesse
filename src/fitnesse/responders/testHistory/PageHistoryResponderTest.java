@@ -2,7 +2,7 @@ package fitnesse.responders.testHistory;
 
 import fitnesse.FitNesseContext;
 import fitnesse.VelocityFactory;
-import fitnesse.http.MockRequest;
+import fitnesse.http.SettableRequest;
 import fitnesse.http.SimpleResponse;
 import fitnesse.responders.run.SuiteExecutionReport;
 import fitnesse.responders.run.TestExecutionReport;
@@ -35,7 +35,7 @@ public class PageHistoryResponderTest {
   private SimpleDateFormat dateFormat = new SimpleDateFormat(TestHistory.TEST_RESULT_FILE_DATE_PATTERN);
   private PageHistoryResponder responder;
   private SimpleResponse response;
-  private MockRequest request;
+  private SettableRequest request;
   private FitNesseContext context;
 
   @Before
@@ -56,7 +56,7 @@ public class PageHistoryResponderTest {
   }
 
   private void makeResponse() throws Exception {
-    request = new MockRequest();
+    request = new SettableRequest();
     request.setResource("TestPage");
     WikiPage root = InMemoryPage.makeRoot("RooT");
     response = (SimpleResponse) responder.makeResponse(FitNesseUtil.makeTestContext(root), request);
@@ -336,7 +336,7 @@ public class PageHistoryResponderTest {
   }
 
   private void makeResultForDate(String page, String resultDate) throws Exception {
-    request = new MockRequest();
+    request = new SettableRequest();
     request.setResource(page);
     request.addInput("resultDate", resultDate);
     response = (SimpleResponse) responder.makeResponse(context, request);
@@ -394,7 +394,7 @@ public class PageHistoryResponderTest {
 
   @Test
   public void shouldBeAbleToAcceptFormatIsXMLforARequest() throws Exception {
-    request = new MockRequest();
+    request = new SettableRequest();
     request.setResource("TestPage");
     request.addInput("format", "xml");
     WikiPage root = InMemoryPage.makeRoot("RooT");
@@ -404,7 +404,7 @@ public class PageHistoryResponderTest {
 
   @Test
   public void shouldntBeCaseSensitiveForXMLRequest() throws Exception {
-    request = new MockRequest();
+    request = new SettableRequest();
     request.setResource("TestPage");
     request.addInput("format", "XMl");
     WikiPage root = InMemoryPage.makeRoot("RooT");
@@ -414,7 +414,7 @@ public class PageHistoryResponderTest {
 
   @Test
   public void shouldSendTestExecutionReportInXMLUponRequest() throws Exception {
-    request = new MockRequest();
+    request = new SettableRequest();
     request.setResource("TestPage");
     File pageDirectory = addPageDirectory("TestPage");
     File resultFile = new File(pageDirectory, "20090503110451_30_20_3_0");

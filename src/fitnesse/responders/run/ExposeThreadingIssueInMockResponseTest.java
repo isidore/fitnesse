@@ -12,7 +12,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import fitnesse.FitNesseContext;
-import fitnesse.http.MockRequest;
+import fitnesse.http.SettableRequest;
 import fitnesse.http.MockResponseSender;
 import fitnesse.http.Response;
 import fitnesse.testutil.FitSocketReceiver;
@@ -24,7 +24,7 @@ import fitnesse.wiki.WikiPage;
 
 public class ExposeThreadingIssueInMockResponseTest {
   private WikiPage root;
-  private MockRequest request;
+  private SettableRequest request;
   private TestResponder responder;
   private FitNesseContext context;
   private Response response;
@@ -40,7 +40,7 @@ public class ExposeThreadingIssueInMockResponseTest {
   public void setUp() throws Exception {
     root = InMemoryPage.makeRoot("RooT");
     crawler = root.getPageCrawler();
-    request = new MockRequest();
+    request = new SettableRequest();
     responder = new TestResponder();
     context = FitNesseUtil.makeTestContext(root);
     context.port = port;

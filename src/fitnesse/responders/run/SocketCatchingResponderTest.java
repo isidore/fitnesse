@@ -4,7 +4,7 @@ package fitnesse.responders.run;
 
 import util.RegexTestCase;
 import fitnesse.FitNesseContext;
-import fitnesse.http.MockRequest;
+import fitnesse.http.SettableRequest;
 import fitnesse.http.MockResponseSender;
 import fitnesse.http.Response;
 import fitnesse.testutil.SimpleSocketSeeker;
@@ -15,7 +15,7 @@ public class SocketCatchingResponderTest extends RegexTestCase {
   private MockResponseSender sender;
   private SocketCatchingResponder responder;
   private FitNesseContext context;
-  private MockRequest request;
+  private SettableRequest request;
 
   public void setUp() throws Exception {
     dealer = new SocketDealer();
@@ -24,7 +24,7 @@ public class SocketCatchingResponderTest extends RegexTestCase {
     responder = new SocketCatchingResponder();
     context = new FitNesseContext();
     context.socketDealer = dealer;
-    request = new MockRequest();
+    request = new SettableRequest();
   }
 
   public void tearDown() throws Exception {

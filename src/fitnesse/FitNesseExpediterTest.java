@@ -4,7 +4,7 @@ package fitnesse;
 
 import fitnesse.authentication.Authenticator;
 import fitnesse.authentication.UnauthorizedResponder;
-import fitnesse.http.MockRequest;
+import fitnesse.http.SettableRequest;
 import fitnesse.http.Request;
 import fitnesse.http.Response;
 import fitnesse.http.ResponseParser;
@@ -41,14 +41,14 @@ public class FitNesseExpediterTest extends RegexTestCase {
 
   public void testAuthenticationGetsCalled() throws Exception {
     context.authenticator = new StoneWallAuthenticator();
-    MockRequest request = new MockRequest();
+    SettableRequest request = new SettableRequest();
     Response response = expediter.createGoodResponse(request);
     assertEquals(401, response.getStatus());
   }
 
   public void testClosedSocketMidResponse() throws Exception {
     try {
-      MockRequest request = new MockRequest();
+      SettableRequest request = new SettableRequest();
       Response response = expediter.createGoodResponse(request);
       socket.close();
       response.readyToSend(expediter);

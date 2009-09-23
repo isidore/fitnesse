@@ -83,4 +83,17 @@ public class Arguments {
   public void setInstallOnly(boolean installOnly) {
     this.installOnly = installOnly;
   }
+
+  @Override
+  public String toString() {
+    return String.format("Port: %s \r\n" + "Root Path: %s\r\n"
+        + "RootDirectory: %s\r\n" + "LogDirectory: %s\r\n" + "%s"
+        + "Days Till Version Expire: %s \r\n" + "UserPassword File: %s\r\n"
+        + "%s"
+
+    , port, rootPath, rootDirectory, logDirectory,
+        (omitUpdate ? "Omitting Updates \r\n" : ""),
+        getDaysTillVersionsExpire(), getUserpass(),
+        isInstallOnly() ? "Install Only \r\n" : "");
+  }
 }

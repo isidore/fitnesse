@@ -4,7 +4,7 @@ package fitnesse.fixtures;
 
 import fitnesse.FitNesseExpediter;
 import fitnesse.authentication.OneUserAuthenticator;
-import fitnesse.http.MockRequest;
+import fitnesse.http.SettableRequest;
 import fitnesse.http.MockResponseSender;
 import fitnesse.responders.editing.EditResponder;
 import fitnesse.responders.run.formatters.XmlFormatter;
@@ -57,7 +57,7 @@ public class PageDriver {
   }
 
   public int requestPageSaveWithContentsByUserAndPassword(String pageName, String contents, String username, String password) throws Exception {
-    MockRequest request = new MockRequest();
+    SettableRequest request = new SettableRequest();
     if (username != null)
       request.setCredentials(username, password);
     request.addInput("responder", "saveData");

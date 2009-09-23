@@ -8,7 +8,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import fitnesse.FitNesseContext;
-import fitnesse.http.MockRequest;
+import fitnesse.http.SettableRequest;
 import fitnesse.http.MockResponseSender;
 import fitnesse.http.Request;
 import fitnesse.http.Response;
@@ -26,7 +26,7 @@ public class StopTestResponderTest {
   @Before
   public void setUp() throws Exception {
 
-    request = new MockRequest();
+    request = new SettableRequest();
     context = new FitNesseContext(InMemoryPage.makeRoot("RooT"));
   }
   
@@ -51,7 +51,7 @@ public class StopTestResponderTest {
     context.runningTestingTracker.addStartedProcess(stoppableA);
     final String bId = context.runningTestingTracker.addStartedProcess(stoppableB);
     
-    request = new MockRequest() {
+    request = new SettableRequest() {
       @Override
       public boolean hasInput(String key) {
         return ("id".equalsIgnoreCase(key));
