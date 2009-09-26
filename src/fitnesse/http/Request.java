@@ -39,6 +39,7 @@ public class Request {
   protected String authorizationPassword;
   private volatile boolean hasBeenParsed;
   private long bytesParsed = 0;
+  public static final String TEST_RESULT_PREFIX = "TestResult_";
 
   public static Set<String> buildAllowedMethodList() {
     Set<String> methods = new HashSet<String>(20);

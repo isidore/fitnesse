@@ -2,6 +2,8 @@
 // Released under the terms of the CPL Common Public License version 1.0.
 package fitnesse;
 
+import java.io.File;
+
 import fitnesse.authentication.Authenticator;
 import fitnesse.authentication.PromiscuousAuthenticator;
 import fitnesse.components.Logger;
@@ -10,12 +12,6 @@ import fitnesse.responders.ResponderFactory;
 import fitnesse.responders.run.RunningTestingTracker;
 import fitnesse.responders.run.SocketDealer;
 import fitnesse.wiki.WikiPage;
-import org.apache.velocity.app.VelocityEngine;
-import org.apache.velocity.VelocityContext;
-import org.apache.velocity.Template;
-
-import java.io.File;
-import java.io.StringWriter;
 
 public class FitNesseContext {
   public FitNesse fitnesse;
@@ -45,15 +41,18 @@ public class FitNesseContext {
     this.root = root;
   }
 
-
+  @Override
   public String toString() {
     String endl = System.getProperty("line.separator");
     StringBuffer buffer = new StringBuffer();
     buffer.append("\t").append("port:              ").append(port).append(endl);
     buffer.append("\t").append("root page:         ").append(root).append(endl);
-    buffer.append("\t").append("logger:            ").append(logger == null ? "none" : logger.toString()).append(endl);
-    buffer.append("\t").append("authenticator:     ").append(authenticator).append(endl);
-    buffer.append("\t").append("html page factory: ").append(htmlPageFactory).append(endl);
+    buffer.append("\t").append("logger:            ").append(
+        logger == null ? "none" : logger.toString()).append(endl);
+    buffer.append("\t").append("authenticator:     ").append(authenticator)
+        .append(endl);
+    buffer.append("\t").append("html page factory: ").append(htmlPageFactory)
+        .append(endl);
 
     return buffer.toString();
   }
@@ -62,9 +61,9 @@ public class FitNesseContext {
     return globalContext != null ? globalContext.port : -1;
   }
 
-
   public File getTestHistoryDirectory() {
-    return new File(String.format("%s/files/%s", rootPagePath, testResultsDirectoryName));
+    return new File(String.format("%s/files/%s", rootPagePath,
+        testResultsDirectoryName));
   }
 
   public void setRootPagePath() {

@@ -1,135 +1,121 @@
 package fitnesse.responders.testHistory;
 
-import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static util.RegexTestCase.assertHasRegexp;
+import junit.framework.TestCase;
 
-import java.io.File;
-import java.util.ArrayList;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.approvaltests.Approvals;
+import org.approvaltests.UseReporter;
+import org.approvaltests.reporters.FailedDiffTextApprovalReport;
 
 import util.FileUtil;
-import fitnesse.FitNesseContext;
+import util.ListUtility;
+import fitnesse.http.Request;
 import fitnesse.http.SettableRequest;
 import fitnesse.http.SimpleResponse;
+import fitnesse.http.Response.ReasonCodes;
+import fitnesse.responders.testHistory.CompareResults.Comparison;
+import fitnesse.responders.testHistory.HistoryComparer.ComparerResults;
+import fitnesse.responders.testHistory.HistoryComparerResponder.FileExister;
 import fitnesse.testutil.FitNesseUtil;
-import fitnesse.wiki.InMemoryPage;
-import fitnesse.wiki.WikiPage;
 
-public class HistoryComparerResponderTest {
-  public HistoryComparerResponder responder;
-  public FitNesseContext context;
-  public WikiPage root;
-  public SettableRequest request;
-  public HistoryComparer mockedComparer;
-  private final String FIRST_FILE_PATH = "./TestDir/files/testResults/TestFolder/firstFakeFile"
-      .replace('/', File.separatorChar);
-  private final String SECOND_FILE_PATH = "./TestDir/files/testResults/TestFolder/secondFakeFile"
-      .replace('/', File.separatorChar);
+@UseReporter(FailedDiffTextApprovalReport.class)
+public class HistoryComparerResponderTest extends TestCase {
 
-  @Before
-  public void setup() throws Exception {
-    request = new SettableRequest();
-    mockedComparer = mock(HistoryComparer.class);
+  public void testShouldBeAbleToCompareTwoHistories() throws Exception {
+    String content = "<table><tr><td>This is the content</td></tr></table>";
+    CompareResults results = new CompareResults(Comparison.Comparable,
+        ListUtility.list(content), ListUtility.list(content), ListUtility
+            .list(ComparerResults.MATCH), ListUtility.asList(new MatchedPair(0,
+            0, .1)));
+    results.setCompleteMatch(false);
 
-    responder = new HistoryComparerResponder(mockedComparer);
-    responder.testing = true;
-    mockedComparer.resultContent = new ArrayList<String>();
-    mockedComparer.resultContent.add("pass");
-    when(mockedComparer.getResultContent()).thenReturn(
-        mockedComparer.resultContent);
-    when(mockedComparer.compare(FIRST_FILE_PATH, SECOND_FILE_PATH)).thenReturn(
-        true);
-    mockedComparer.firstTableResults = new ArrayList<String>();
-    mockedComparer.secondTableResults = new ArrayList<String>();
-    mockedComparer.firstTableResults
-        .add("<table><tr><td>This is the content</td></tr></table>");
-    mockedComparer.secondTableResults
-        .add("<table><tr><td>This is the content</td></tr></table>");
+    SimpleResponse response = runForResults(results, true);
+    assertEquals(ReasonCodes.OK, response.getStatus());
+    Approvals.approveHtml(response.getContent());
+  }
 
-    request.addInput("TestResult_firstFakeFile", "");
-    request.addInput("TestResult_secondFakeFile", "");
+  public void testShouldReturnErrorPageIfCompareFails() throws Exception {
+    CompareResults results = new CompareResults(Comparison.Uncomparable);
+    SimpleResponse response = runForResults(results, true);
+    assertEquals(400, response.getStatus());
+    Approvals.approveHtml(response.getContent());
+  }
+
+  public void testShouldReturnErrorPageIfFilesDontExist() throws Exception {
+    SimpleResponse response = runForResults(null, false);
+    assertEquals(400, response.getStatus());
+    Approvals.approveHtml(response.getContent());
+  }
+
+  public void testShouldReturnErrorPageIfOnly1InputFile() throws Exception {
+    SettableRequest request = new SettableRequest();
+    request.addInput(Request.TEST_RESULT_PREFIX + "20090215111430.txt", "");
     request.setResource("TestFolder");
-    FileUtil.createFile("TestDir/files/testResults/TestFolder/firstFakeFile",
-        "firstFile");
-    FileUtil.createFile("TestDir/files/testResults/TestFolder/secondFakeFile",
-        "secondFile");
-    context = FitNesseUtil.makeTestContext(root);
-    root = InMemoryPage.makeRoot("RooT");
-  }
 
-  @Test
-  public void shouldGetTwoHistoryFilesFromRequest() throws Exception {
-    responder.makeResponse(context, request);
-    verify(mockedComparer).compare(FIRST_FILE_PATH, SECOND_FILE_PATH);
-  }
-
-  @Test
-  public void shouldReturnErrorPageIfCompareFails() throws Exception {
-    when(mockedComparer.compare(FIRST_FILE_PATH, SECOND_FILE_PATH)).thenReturn(
-        false);
-    SimpleResponse response = (SimpleResponse) responder.makeResponse(context,
-        request);
+    HistoryComparerResponder responder = new HistoryComparerResponder();
+    SimpleResponse response = (SimpleResponse) responder.makeResponse(
+        FitNesseUtil.makeTestContext(null), request);
+    
     assertEquals(400, response.getStatus());
-    assertHasRegexp(
-        "These files could not be compared.  They might be suites, or something else might be wrong.",
-        response.getContent());
+    Approvals.approveHtml(response.getContent());
   }
 
-  @Test
-  public void shouldReturnErrorPageIfFilesAreInvalid() throws Exception {
-    request = new SettableRequest();
-    request.addInput("TestResult_firstFile", "");
-    request.addInput("TestResult_secondFile", "");
-    request.setResource("TestFolder");
-    SimpleResponse response = (SimpleResponse) responder.makeResponse(context,
-        request);
-    assertEquals(400, response.getStatus());
-    assertHasRegexp("Compare Failed because the files were not found.",
-        response.getContent());
+  private SimpleResponse runForResults(CompareResults results,
+      boolean filesExist) throws Exception {
+    HistoryComparerResponder responder = new HistoryComparerResponder();
+    responder.fileExister = new FilesExistMock(filesExist);
+    SimpleResponse response = (SimpleResponse) responder.makeResponse(
+        FitNesseUtil.makeTestContext(null), setupRequest(responder, results));
+    return response;
   }
 
-  @Test
-  public void shouldReturnErrorPageIfThereAreTooFewInputFiles()
-      throws Exception {
-    request = new SettableRequest();
-    request.addInput("TestResult_firstFile", "");
-    request.setResource("TestFolder");
-    SimpleResponse response = (SimpleResponse) responder.makeResponse(context,
-        request);
-    assertEquals(400, response.getStatus());
-    assertHasRegexp(
-        "Compare Failed because the wrong number of Input Files were given. Select two please.",
-        response.getContent());
+  private Request setupRequest(HistoryComparerResponder responder,
+      CompareResults results) throws Exception {
+    String folder = "TestFolder";
+    String basePath = FileUtil
+        .useCorrectPathSeperator("./TestDir/files/testResults/" + folder + "/");
+    String name1 = "20090215111430.txt";
+    String name2 = "20090215111435.txt";
+    HistoryComparer mockedComparer = mockOutComparer(results, basePath + name1,
+        basePath + name2);
+    responder.setTestComparer(mockedComparer);
+
+    SettableRequest request = createCompareRequestForFiles(folder, name1, name2);
+
+    return request;
   }
 
-  @Test
-  public void shouldReturnErrorPageIfThereAreTooManyInputFiles()
-      throws Exception {
-    request.addInput("TestResult_thirdFakeFile", "");
-    SimpleResponse response = (SimpleResponse) responder.makeResponse(context,
-        request);
-    assertEquals(400, response.getStatus());
-    assertHasRegexp(
-        "Compare Failed because the wrong number of Input Files were given. Select two please.",
-        response.getContent());
+  private SettableRequest createCompareRequestForFiles(String folder,
+      String name1, String name2) {
+    SettableRequest request = new SettableRequest();
+    request.addInput(Request.TEST_RESULT_PREFIX + name1, "");
+    request.addInput(Request.TEST_RESULT_PREFIX + name2, "");
+    request.setResource(folder);
+    return request;
   }
 
-  @Test
-  public void shouldReturnAResponseWithResultContent() throws Exception {
-    SimpleResponse response = (SimpleResponse) responder.makeResponse(context,
-        request);
-    verify(mockedComparer).getResultContent();
-    assertHasRegexp("This is the content", response.getContent());
+  private HistoryComparer mockOutComparer(CompareResults results,
+      String firstFile, String secondFile) throws Exception {
+
+    HistoryComparer mockedComparer = mock(HistoryComparer.class);
+    when(mockedComparer.compare(firstFile, secondFile)).thenReturn(results);
+    return mockedComparer;
   }
 
-  @After
-  public void tearDown() {
-    FileUtil.deleteFileSystemDirectory("testRoot");
+  /* Inner Classes */
+
+  public static class FilesExistMock extends FileExister {
+    private final boolean exists;
+
+    public FilesExistMock(boolean exists) {
+      this.exists = exists;
+    }
+
+    @Override
+    public boolean filesExist(String... files) {
+      return exists;
+    }
   }
+
 }

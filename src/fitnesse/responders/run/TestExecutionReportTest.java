@@ -1,19 +1,24 @@
 package fitnesse.responders.run;
 
-import fitnesse.FitNesseContext;
-import fitnesse.VelocityFactory;
-import static fitnesse.responders.run.TestExecutionReport.*;
-import fitnesse.testutil.FitNesseUtil;
-import fitnesse.wiki.InMemoryPage;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.Assert;
 
 import java.io.ByteArrayInputStream;
 import java.io.StringWriter;
 import java.util.List;
+
+import org.junit.Before;
+import org.junit.Test;
+
+import fitnesse.FitNesseContext;
+import fitnesse.VelocityFactory;
+import fitnesse.responders.run.TestExecutionReport.Expectation;
+import fitnesse.responders.run.TestExecutionReport.InstructionResult;
+import fitnesse.responders.run.TestExecutionReport.Row;
+import fitnesse.responders.run.TestExecutionReport.Table;
+import fitnesse.responders.run.TestExecutionReport.TestResult;
+import fitnesse.testutil.FitNesseUtil;
+import fitnesse.wiki.InMemoryPage;
 
 public class TestExecutionReportTest {
   private TestExecutionReport expected;
@@ -43,7 +48,8 @@ public class TestExecutionReportTest {
 
   private void serializeAndDeserialize() throws Exception {
     String xmlReport = reportToXml(expected);
-    actual = new TestExecutionReport(new ByteArrayInputStream(xmlReport.getBytes()));
+    actual = new TestExecutionReport(new ByteArrayInputStream(xmlReport
+        .getBytes()));
   }
 
   private void addDummyResult() {
@@ -181,16 +187,26 @@ public class TestExecutionReportTest {
 
   @Test
   public void summaryClass() throws Exception {
-    assertEquals("pass", TestExecutionReport.summaryClass(new TestSummary(1, 0, 0, 0)));
-    assertEquals("pass", TestExecutionReport.summaryClass(new TestSummary(1, 0, 1, 0)));
-    assertEquals("fail", TestExecutionReport.summaryClass(new TestSummary(1, 1, 0, 0)));
-    assertEquals("fail", TestExecutionReport.summaryClass(new TestSummary(0, 1, 0, 0)));
-    assertEquals("fail", TestExecutionReport.summaryClass(new TestSummary(1, 1, 1, 0)));
-    assertEquals("fail", TestExecutionReport.summaryClass(new TestSummary(1, 1, 1, 1)));
-    assertEquals("error", TestExecutionReport.summaryClass(new TestSummary(0, 0, 0, 1)));
-    assertEquals("error", TestExecutionReport.summaryClass(new TestSummary(0, 0, 1, 1)));
-    assertEquals("ignore", TestExecutionReport.summaryClass(new TestSummary(0, 0, 0, 0)));
-    assertEquals("ignore", TestExecutionReport.summaryClass(new TestSummary(0, 0, 1, 0)));
+    assertEquals("pass", TestExecutionReport.summaryClass(new TestSummary(1, 0,
+        0, 0)));
+    assertEquals("pass", TestExecutionReport.summaryClass(new TestSummary(1, 0,
+        1, 0)));
+    assertEquals("fail", TestExecutionReport.summaryClass(new TestSummary(1, 1,
+        0, 0)));
+    assertEquals("fail", TestExecutionReport.summaryClass(new TestSummary(0, 1,
+        0, 0)));
+    assertEquals("fail", TestExecutionReport.summaryClass(new TestSummary(1, 1,
+        1, 0)));
+    assertEquals("fail", TestExecutionReport.summaryClass(new TestSummary(1, 1,
+        1, 1)));
+    assertEquals("error", TestExecutionReport.summaryClass(new TestSummary(0,
+        0, 0, 1)));
+    assertEquals("error", TestExecutionReport.summaryClass(new TestSummary(0,
+        0, 1, 1)));
+    assertEquals("ignore", TestExecutionReport.summaryClass(new TestSummary(0,
+        0, 0, 0)));
+    assertEquals("ignore", TestExecutionReport.summaryClass(new TestSummary(0,
+        0, 1, 0)));
 
   }
 }

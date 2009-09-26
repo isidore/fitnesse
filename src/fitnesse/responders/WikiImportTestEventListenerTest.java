@@ -2,22 +2,20 @@
 // Released under the terms of the CPL Common Public License version 1.0.
 package fitnesse.responders;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
 import util.StandardOutAndErrorRecorder;
+import fitnesse.http.ChunkedResponse;
 import fitnesse.responders.run.SuiteResponder;
 import fitnesse.responders.run.TestResponder;
 import fitnesse.testutil.FitNesseUtil;
 import fitnesse.wiki.InMemoryPage;
 import fitnesse.wiki.PageData;
 import fitnesse.wiki.WikiPage;
-import fitnesse.wiki.WikiPageProperties;
-import fitnesse.http.ChunkedResponse;
-import org.junit.Before;
-import org.junit.After;
-import org.junit.Test;
-import org.junit.Assert;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 public class WikiImportTestEventListenerTest {
   private WikiImportTestEventListener eventListener;
@@ -93,7 +91,8 @@ public class WikiImportTestEventListenerTest {
 
     assertEquals("", pageOne.getData().getContent());
     assertEquals("", data.getContent());
-    assertEquals("Updating imported content...java.lang.Exception: blah", sentMessages);
+    assertEquals("Updating imported content...java.lang.Exception: blah",
+        sentMessages);
   }
 
   @Test
@@ -122,7 +121,8 @@ public class WikiImportTestEventListenerTest {
     assertEquals("Updating imported content...done", sentMessages);
   }
 
-  private void addImportPropertyToPage(WikiPage page, boolean isRoot, boolean autoUpdate) throws Exception {
+  private void addImportPropertyToPage(WikiPage page, boolean isRoot,
+      boolean autoUpdate) throws Exception {
     PageData data = page.getData();
     String sourceUrl = FitNesseUtil.URL + "PageOne";
     WikiImportProperty importProps = new WikiImportProperty(sourceUrl);
@@ -143,12 +143,13 @@ public class WikiImportTestEventListenerTest {
       response = new ChunkedResponse("html");
     }
 
+    @Override
     public void addToResponse(String output) throws Exception {
       AddMessage(output);
     }
 
     public void setXmlFormat() {
-      response = new ChunkedResponse("xml");  
+      response = new ChunkedResponse("xml");
     }
   }
 
@@ -157,6 +158,7 @@ public class WikiImportTestEventListenerTest {
       response = new ChunkedResponse("html");
     }
 
+    @Override
     public void addToResponse(String output) throws Exception {
       AddMessage(output);
     }

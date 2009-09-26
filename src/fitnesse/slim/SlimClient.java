@@ -39,7 +39,8 @@ public class SlimClient {
       Thread.sleep(50);
     }
     reader = new StreamReader(client.getInputStream());
-    writer = new BufferedWriter(new OutputStreamWriter(client.getOutputStream(), "UTF-8"));
+    writer = new BufferedWriter(new OutputStreamWriter(
+        client.getOutputStream(), "UTF-8"));
     slimServerVersion = reader.readLine();
   }
 
@@ -60,7 +61,8 @@ public class SlimClient {
     return slimServerVersion.startsWith("Slim -- V");
   }
 
-  public Map<String, Object> invokeAndGetResponse(List<Object> statements) throws Exception {
+  public Map<String, Object> invokeAndGetResponse(List<Object> statements)
+      throws Exception {
     String instructions = ListSerializer.serialize(statements);
     writeString(instructions);
     String resultLength = reader.read(6);
@@ -72,7 +74,8 @@ public class SlimClient {
   }
 
   private void writeString(String string) throws IOException {
-    String packet = String.format("%06d:%s", string.getBytes("UTF-8").length, string);
+    String packet = String.format("%06d:%s", string.getBytes("UTF-8").length,
+        string);
     writer.write(packet);
     writer.flush();
   }
@@ -84,7 +87,8 @@ public class SlimClient {
   public static Map<String, Object> resultToMap(List<Object> slimResults) {
     Map<String, Object> map = new HashMap<String, Object>();
     for (Object aResult : slimResults) {
-      List<Object> resultList = ListUtility.uncheckedCast(Object.class, aResult);
+      List<Object> resultList = ListUtility
+          .uncheckedCast(Object.class, aResult);
       map.put((String) resultList.get(0), resultList.get(1));
     }
     return map;

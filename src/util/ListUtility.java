@@ -11,9 +11,9 @@ public class ListUtility {
     return new LinkedList<Object>();
   }
 
-  public static List<Object> list(Object... objects) {
+  public static <T> List<Object> list(T... objects) {
     List<Object> list = new ArrayList<Object>();
-    for (Object object : objects)
+    for (T object : objects)
       list.add(object);
     return list;
   }
@@ -25,8 +25,16 @@ public class ListUtility {
     return list;
   }
 
+  public static <T> List<T> asList(T... strings) {
+    List<T> list = new ArrayList<T>();
+    for (T string : strings)
+      list.add(string);
+    return list;
+  }
+
   @SuppressWarnings("unchecked")
   public static <T> List<T> uncheckedCast(Class<?> destType, Object sourceList) {
     return (List<T>) sourceList;
   }
+
 }

@@ -7,6 +7,7 @@ import java.util.List;
 import org.htmlparser.util.ParserException;
 
 import fitnesse.responders.run.TestExecutionReport;
+import fitnesse.responders.testHistory.CompareResults.Comparison;
 import fitnesse.slimTables.HtmlTableScanner;
 
 public class HistoryComparer {
@@ -16,42 +17,7 @@ public class HistoryComparer {
     public static final String MATCH = "pass";
   }
 
-  // min for match is .8 content score + .2 topology bonus.
-  public static final double MIN_MATCH_SCORE = .8;
-  public static final double MAX_MATCH_SCORE = 1.2;
   private TableListComparer comparer;
-
-  static class MatchedPair {
-    int first;
-    int second;
-    public double matchScore;
-
-    public MatchedPair(Integer first, Integer second, double matchScore) {
-      this.first = first;
-      this.second = second;
-      this.matchScore = matchScore;
-    }
-
-    @Override
-    public String toString() {
-      return "[first: " + first + ", second: " + second + ", matchScore: "
-          + matchScore + "]";
-    }
-
-    @Override
-    public int hashCode() {
-      return this.first + this.second;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-      return this.equals((MatchedPair) (obj));
-    }
-
-    public boolean equals(MatchedPair match) {
-      return (this.first == match.first && this.second == match.second);
-    }
-  }
 
   public String secondFileContent = "";
   public String firstFileContent = "";
@@ -76,26 +42,13 @@ public class HistoryComparer {
     }
   }
 
-  public double findScoreByFirstTableIndex(int firstIndex) {
-    for (MatchedPair match : matchedTables) {
-      if (match.first == firstIndex)
-        return match.matchScore;
-    }
-    return 0.0;
-  }
-
-  public String findScoreByFirstTableIndexAsStringAsPercent(int firstIndex) {
-    double score = findScoreByFirstTableIndex(firstIndex);
-    return String.format("%10.2f", (score / MAX_MATCH_SCORE) * 100);
-  }
-
   public boolean allTablesMatch() {
     if (matchedTables == null || matchedTables.size() == 0
         || firstTableResults == null || firstTableResults.size() == 0)
       return false;
     if (matchedTables.size() == firstTableResults.size()) {
       for (MatchedPair match : matchedTables) {
-        if (match.matchScore < (MAX_MATCH_SCORE - .01))
+        if (match.matchScore < (MatchedPair.MAX_MATCH_SCORE - .01))
           return false;
       }
       return true;
@@ -103,18 +56,18 @@ public class HistoryComparer {
     return false;
   }
 
-  public boolean compare(String firstFilePath, String secondFilePath)
+  public CompareResults compare(String firstFilePath, String secondFilePath)
       throws Exception {
     if (firstFilePath.equals(secondFilePath))
-      return false;
+      return new CompareResults(Comparison.Uncomparable);
     initializeFileContents(firstFilePath, secondFilePath);
     return grabAndCompareTablesFromHtml();
   }
 
-  public boolean grabAndCompareTablesFromHtml() throws ParserException {
+  public CompareResults grabAndCompareTablesFromHtml() throws ParserException {
     initializeComparerHelpers();
     if (firstScanner.getTableCount() == 0 || secondScanner.getTableCount() == 0)
-      return false;
+      return new CompareResults(Comparison.Uncomparable);
     comparer = new TableListComparer(firstScanner, secondScanner);
     comparer.compareAllTables();
     matchedTables = comparer.tableMatches;
@@ -122,7 +75,10 @@ public class HistoryComparer {
     lineUpTheTables();
     addBlanksToUnmatchingRows();
     makePassFailResultsFromMatches();
-    return true;
+    CompareResults compareResults = new CompareResults(Comparison.Comparable,
+        firstTableResults, secondTableResults, resultContent, matchedTables);
+    compareResults.setCompleteMatch(allTablesMatch());
+    return compareResults;
   }
 
   private void initializeComparerHelpers() throws ParserException {
@@ -229,7 +185,8 @@ public class HistoryComparer {
   }
 
   private boolean thereIsAMatchForTableWithIndex(int tableIndex) {
-    return findScoreByFirstTableIndex(tableIndex) > 0.1;
+    return MatchedPair.findMatchByFirstTableIndex(matchedTables, tableIndex)
+        .getScore() > 0.1;
   }
 
   private boolean firstAndSecondTableAreNotBlank(int tableIndex) {

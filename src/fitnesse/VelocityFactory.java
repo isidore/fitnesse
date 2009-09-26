@@ -1,10 +1,10 @@
 package fitnesse;
 
-import org.apache.velocity.app.VelocityEngine;
-import org.apache.velocity.VelocityContext;
-import org.apache.velocity.Template;
-
 import java.io.StringWriter;
+
+import org.apache.velocity.Template;
+import org.apache.velocity.VelocityContext;
+import org.apache.velocity.app.VelocityEngine;
 
 public class VelocityFactory {
   private VelocityEngine velocityEngine = null;
@@ -25,9 +25,10 @@ public class VelocityFactory {
     this.rootDirectoryName = rootDirectoryName;
   }
 
-
-  public static String translateTemplate(VelocityContext velocityContext, String templateFileName) throws Exception {
-    Template template = instance.getVelocityEngine().getTemplate(templateFileName);
+  public static String translateTemplate(VelocityContext velocityContext,
+      String templateFileName) throws Exception {
+    Template template = VelocityFactory.getVelocityEngine().getTemplate(
+        templateFileName);
     StringWriter writer = new StringWriter();
     template.merge(velocityContext, writer);
     return writer.toString();
@@ -36,8 +37,10 @@ public class VelocityFactory {
   public static VelocityEngine getVelocityEngine() {
     if (instance.velocityEngine == null) {
       instance.velocityEngine = new VelocityEngine();
-      String templatePath = String.format("%s/%s/files/templates", instance.rootPath, instance.rootDirectoryName);
-      instance.velocityEngine.setProperty(VelocityEngine.FILE_RESOURCE_LOADER_PATH, templatePath);
+      String templatePath = String.format("%s/%s/files/templates",
+          instance.rootPath, instance.rootDirectoryName);
+      instance.velocityEngine.setProperty(
+          VelocityEngine.FILE_RESOURCE_LOADER_PATH, templatePath);
       try {
         instance.velocityEngine.init();
       } catch (Exception e) {

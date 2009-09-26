@@ -12,14 +12,15 @@ public class StreamReaderTest extends RegexTestCase {
   private String readResult;
   private byte[] byteResult;
   private Thread thread;
-  @SuppressWarnings("unused")
   private Exception exception;
 
+  @Override
   public void setUp() throws Exception {
     output = new PipedOutputStream();
     reader = new StreamReader(new PipedInputStream(output));
   }
 
+  @Override
   public void tearDown() throws Exception {
     output.close();
     reader.close();
@@ -120,7 +121,8 @@ public class StreamReaderTest extends RegexTestCase {
     checkReadUoTo("12345", "112123123412345", "1121231234");
   }
 
-  private void checkReadUoTo(String boundary, String input, String expected) throws Exception {
+  private void checkReadUoTo(String boundary, String input, String expected)
+      throws Exception {
     startReading(new ReadUpTo(boundary));
     writeToPipe(input);
     finishReading();
@@ -202,11 +204,11 @@ public class StreamReaderTest extends RegexTestCase {
   }
 
   abstract class ReadThread extends Thread {
+    @Override
     public void run() {
       try {
         doRead();
-      }
-      catch (Exception e) {
+      } catch (Exception e) {
         exception = e;
       }
     }
@@ -215,6 +217,7 @@ public class StreamReaderTest extends RegexTestCase {
   }
 
   class ReadLine extends ReadThread {
+    @Override
     public void doRead() throws Exception {
       readResult = reader.readLine();
     }
@@ -227,6 +230,7 @@ public class StreamReaderTest extends RegexTestCase {
       this.amount = amount;
     }
 
+    @Override
     public void doRead() throws Exception {
       readResult = reader.read(amount);
     }
@@ -239,12 +243,14 @@ public class StreamReaderTest extends RegexTestCase {
       boundary = b;
     }
 
+    @Override
     public void doRead() throws Exception {
       readResult = reader.readUpTo(boundary);
     }
   }
 
   class ReadLineBytes extends ReadThread {
+    @Override
     public void doRead() throws Exception {
       byteResult = reader.readLineBytes();
     }
@@ -257,6 +263,7 @@ public class StreamReaderTest extends RegexTestCase {
       this.amount = amount;
     }
 
+    @Override
     public void doRead() throws Exception {
       byteResult = reader.readBytes(amount);
     }
@@ -269,6 +276,7 @@ public class StreamReaderTest extends RegexTestCase {
       boundary = b;
     }
 
+    @Override
     public void doRead() throws Exception {
       byteResult = reader.readBytesUpTo(boundary);
     }

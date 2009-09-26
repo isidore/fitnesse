@@ -1,0 +1,8 @@
+Port: 123 
+Root Path: MyWd
+RootDirectory: MyRoot
+LogDirectory: LogDir
+Omitting Updates 
+Days Till Version Expire: 322 
+UserPassword File: userpass.txt
+Install Only 

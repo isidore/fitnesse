@@ -1,44 +1,27 @@
 #set ($page_title="History Comparison")
 #parse("pageHead.vm")
-#if($resultContent)
-
-#set($Header ="" )
-#set($passfail = "fail")
-  #if($completeMatch)
-      #set($Header = "A Complete Match")
-      #set($passfail = "pass")
-  #else
-    #set($Header = "Something Didn't Match")
-  #end
+#set($count=0)
+#if($results.getResultContent() )
 <table>
   <tr>
-    <td class=$passfail>
-        $Header
+    <td class=#if($results.isCompleteMatch())"pass"#else"fail"#end>
+      #if($$results.isCompleteMatch()) A Complete Match #else Something Didn't Match #end
     </td>
   </tr>
 </table>
 
-#set($score = "")
 <table>
   <tr>
     <td>"Scores"</td>
-    <td>$firstFileName</td>
-    <td>$secondFileName</td>
+    <td>$results.getFirstTableCreationDate()</td>
+    <td>$results.getSecondTableCreationDate()</td>
   </tr>
-  #set ($matched = "Match")
-#foreach($result in $resultContent)
-   #set($score = $comparer.findScoreByFirstTableIndexAsStringAsPercent($count))
+#foreach($result in $results.getResultContent())
   <tr>
-    #if($result.equals("pass"))
-      #set($matched = "Match. Score: " + $score + "%")
-    #else
-      #set($matched = "Not a match. Score: " + $score + "%")
-    #end 
-    <td class=$result>$matched</td>
-    #set ($firstTable = $firstTables.get($count))
-    #set ($secondTable = $secondTables.get($count))
-    <td>$firstTable</td>
-    <td>$secondTable</td>
+	<td class=$result> #if($result.equals("pass"))Match. #else Not a Match. #end 
+		Score: $common.asPercentage($results.findMatchByFirstTableIndex($count).getScoreAsPercentage()) </td>
+    <td>$results.getFirstTableResults().get($count)</td>
+    <td>$results.getSecondTableResults().get($count)</td>
     #set ($count = $count + 1)
   </tr>
 

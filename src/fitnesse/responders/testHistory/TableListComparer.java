@@ -1,28 +1,29 @@
 package fitnesse.responders.testHistory;
 
-import static fitnesse.responders.testHistory.HistoryComparer.MatchedPair;
-import fitnesse.slimTables.HtmlTableScanner;
-import fitnesse.slimTables.Table;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+
+import fitnesse.slimTables.HtmlTableScanner;
+import fitnesse.slimTables.Table;
 
 public class TableListComparer {
   private HtmlTableScanner leftHandScanner;
   private HtmlTableScanner rightHandScanner;
   protected ArrayList<MatchedPair> tableMatches;
 
-
-  public TableListComparer(HtmlTableScanner leftHandScanner, HtmlTableScanner rightHandScanner) {
+  public TableListComparer(HtmlTableScanner leftHandScanner,
+      HtmlTableScanner rightHandScanner) {
     this.leftHandScanner = leftHandScanner;
     this.rightHandScanner = rightHandScanner;
     tableMatches = new ArrayList<MatchedPair>();
   }
 
   public void compareAllTables() {
-    for (int leftTableIndex = 0; leftTableIndex < leftHandScanner.getTableCount(); leftTableIndex++) {
-      for (int rightTableIndex = 0; rightTableIndex < rightHandScanner.getTableCount(); rightTableIndex++) {
+    for (int leftTableIndex = 0; leftTableIndex < leftHandScanner
+        .getTableCount(); leftTableIndex++) {
+      for (int rightTableIndex = 0; rightTableIndex < rightHandScanner
+          .getTableCount(); rightTableIndex++) {
         double score = compareTables(leftTableIndex, rightTableIndex);
         saveMatch(leftTableIndex, rightTableIndex, score);
       }
@@ -43,7 +44,7 @@ public class TableListComparer {
   }
 
   public boolean theTablesMatch(double score) {
-    return score >= HistoryComparer.MIN_MATCH_SCORE;
+    return score >= MatchedPair.MIN_MATCH_SCORE;
   }
 
   public void saveMatch(int leftTableIndex, int rightTableIndex, double score) {
@@ -54,11 +55,14 @@ public class TableListComparer {
 
   public void saveOnlyTheBestMatches() {
     for (int matchIndex = 0; matchIndex < tableMatches.size(); matchIndex++) {
-      for (int secondMatchIndex = matchIndex + 1; secondMatchIndex < tableMatches.size(); secondMatchIndex++) {
-        if (tableMatches.get(matchIndex).first == tableMatches.get(secondMatchIndex).first) {
+      for (int secondMatchIndex = matchIndex + 1; secondMatchIndex < tableMatches
+          .size(); secondMatchIndex++) {
+        if (tableMatches.get(matchIndex).first == tableMatches
+            .get(secondMatchIndex).first) {
           tableMatches.remove(secondMatchIndex);
           secondMatchIndex--;
-        } else if (tableMatches.get(matchIndex).second == tableMatches.get(secondMatchIndex).second) {
+        } else if (tableMatches.get(matchIndex).second == tableMatches
+            .get(secondMatchIndex).second) {
           tableMatches.remove(secondMatchIndex);
           secondMatchIndex--;
         }
@@ -172,7 +176,8 @@ public class TableListComparer {
     }
 
     private boolean contentMatches(String content1, String content2) {
-      return areEqualAndNotScenarioCalls(content1, content2) || bothAreScenarioCalls(content1, content2);
+      return areEqualAndNotScenarioCalls(content1, content2)
+          || bothAreScenarioCalls(content1, content2);
     }
 
     private boolean bothAreScenarioCalls(String content1, String content2) {
@@ -180,7 +185,8 @@ public class TableListComparer {
     }
 
     private boolean areEqualAndNotScenarioCalls(String content1, String content2) {
-      return !isCalledScenario(content1) && !isCalledScenario(content2) && content1.equals(content2);
+      return !isCalledScenario(content1) && !isCalledScenario(content2)
+          && content1.equals(content2);
     }
 
     private double scoreCellPassFailResult(int row, int col) {

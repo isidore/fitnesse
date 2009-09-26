@@ -4,11 +4,11 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static util.RegexTestCase.assertSubString;
 
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.velocity.app.VelocityEngine;
 import org.junit.After;
@@ -16,6 +16,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import util.FileUtil;
+import util.ListUtility;
 import fitnesse.FitNesseContext;
 import fitnesse.VelocityFactory;
 import fitnesse.responders.run.TestExecutionReport;
@@ -53,7 +54,7 @@ public class HistoryComparerTest {
     comparer.resultContent = new ArrayList<String>();
     comparer.firstTableResults = new ArrayList<String>();
     comparer.secondTableResults = new ArrayList<String>();
-    comparer.matchedTables = new ArrayList<HistoryComparer.MatchedPair>();
+    comparer.matchedTables = new ArrayList<MatchedPair>();
   }
 
   @Test
@@ -76,7 +77,7 @@ public class HistoryComparerTest {
   public void shouldKnowIfTheTwoFilesAreTheSameFile() throws Exception {
     FileUtil.createFile("TestFolder/FileOne", "this is file one");
     boolean compareWorked = comparer.compare("TestFolder/FileOne",
-        "TestFolder/FileOne");
+        "TestFolder/FileOne").isComparisonPossible();
     assertFalse(compareWorked);
     FileUtil.deleteFileSystemDirectory("TestFolder");
   }
@@ -85,7 +86,7 @@ public class HistoryComparerTest {
   public void shouldCompareTwoSetsOfTables() throws Exception {
     comparer.firstFileContent = "<table><tr><td>x</td></tr></table><table><tr><td>y</td></tr></table>";
     comparer.secondFileContent = "<table><tr><td>x</td></tr></table><table><tr><td>y</td></tr></table>";
-    assertTrue(comparer.grabAndCompareTablesFromHtml());
+    assertTrue(comparer.grabAndCompareTablesFromHtml().isComparisonPossible());
     assertEquals(2, comparer.getResultContent().size());
     assertEquals("pass", comparer.getResultContent().get(0));
     assertEquals("pass", comparer.getResultContent().get(1));
@@ -95,7 +96,7 @@ public class HistoryComparerTest {
   public void shouldCompareUnevenAmountsOfTables() throws Exception {
     comparer.firstFileContent = "<table><tr><td>x</td></tr></table><table><tr><td>y</td></tr></table>";
     comparer.secondFileContent = "<table><tr><td>x</td></tr></table>";
-    assertTrue(comparer.grabAndCompareTablesFromHtml());
+    assertTrue(comparer.grabAndCompareTablesFromHtml().isComparisonPossible());
     assertEquals(2, comparer.resultContent.size());
     assertEquals("pass", comparer.resultContent.get(0));
     assertEquals("fail", comparer.resultContent.get(1));
@@ -103,21 +104,12 @@ public class HistoryComparerTest {
 
   @Test
   public void findMatchScoreByFirstIndex() throws Exception {
-    comparer.matchedTables.add(new HistoryComparer.MatchedPair(1, 2, 1.1));
-    comparer.matchedTables.add(new HistoryComparer.MatchedPair(3, 4, 1.0));
-    assertEquals(1.1, comparer.findScoreByFirstTableIndex(1), .0001);
-    assertEquals(1.0, comparer.findScoreByFirstTableIndex(3), .0001);
-  }
-
-  @Test
-  public void shouldBeAbleToFindMatchScoreByFirstIndexAndReturnAPercentString()
-      throws Exception {
-    comparer.matchedTables.add(new HistoryComparer.MatchedPair(1, 2, 1.1));
-    comparer.matchedTables.add(new HistoryComparer.MatchedPair(3, 4, 1.0));
-    assertSubString("91.67", comparer
-        .findScoreByFirstTableIndexAsStringAsPercent(1));
-    assertSubString("83.33", comparer
-        .findScoreByFirstTableIndexAsStringAsPercent(3));
+    List<MatchedPair> list = ListUtility.asList(new MatchedPair(1, 2, 1.1),
+        new MatchedPair(3, 4, 1.0));
+    assertEquals(1.1, MatchedPair.findMatchByFirstTableIndex(list, 1)
+        .getScore(), .0001);
+    assertEquals(1.0, MatchedPair.findMatchByFirstTableIndex(list, 3)
+        .getScore(), .0001);
   }
 
   @Test
@@ -128,13 +120,13 @@ public class HistoryComparerTest {
     comparer.firstTableResults.add("B");
     comparer.secondTableResults.add("A");
     comparer.secondTableResults.add("B");
-    comparer.matchedTables.add(new HistoryComparer.MatchedPair(0, 0,
-        HistoryComparer.MAX_MATCH_SCORE));
-    comparer.matchedTables.add(new HistoryComparer.MatchedPair(1, 1, 1.0));
+    comparer.matchedTables.add(new MatchedPair(0, 0,
+        MatchedPair.MAX_MATCH_SCORE));
+    comparer.matchedTables.add(new MatchedPair(1, 1, 1.0));
     assertFalse(comparer.allTablesMatch());
-    comparer.matchedTables.remove(new HistoryComparer.MatchedPair(1, 1, 1.0));
-    comparer.matchedTables.add(new HistoryComparer.MatchedPair(1, 1,
-        HistoryComparer.MAX_MATCH_SCORE));
+    comparer.matchedTables.remove(new MatchedPair(1, 1, 1.0));
+    comparer.matchedTables.add(new MatchedPair(1, 1,
+        MatchedPair.MAX_MATCH_SCORE));
     assertTrue(comparer.allTablesMatch());
     comparer.firstTableResults.add("C");
     assertFalse(comparer.allTablesMatch());
@@ -152,8 +144,8 @@ public class HistoryComparerTest {
     comparer.secondTableResults.add("B");
     comparer.secondTableResults.add("Z");
     comparer.secondTableResults.add("D");
-    comparer.matchedTables.add(new HistoryComparer.MatchedPair(1, 2, 1.0));
-    comparer.matchedTables.add(new HistoryComparer.MatchedPair(3, 4, 1.0));
+    comparer.matchedTables.add(new MatchedPair(1, 2, 1.0));
+    comparer.matchedTables.add(new MatchedPair(3, 4, 1.0));
     comparer.lineUpTheTables();
     assertEquals("A", comparer.firstTableResults.get(0));
     assertEquals("<table><tr><td></td></tr></table>",
@@ -177,8 +169,8 @@ public class HistoryComparerTest {
     comparer.secondTableResults.add("Z");
     comparer.secondTableResults.add("D");
     comparer.secondTableResults.add("shouldMatchWithBlank");
-    comparer.matchedTables.add(new HistoryComparer.MatchedPair(1, 0, 1.0));
-    comparer.matchedTables.add(new HistoryComparer.MatchedPair(3, 4, 1.0));
+    comparer.matchedTables.add(new MatchedPair(1, 0, 1.0));
+    comparer.matchedTables.add(new MatchedPair(3, 4, 1.0));
     comparer.lineUpTheTables();
     assertEquals("A", comparer.firstTableResults.get(0));
     assertEquals("B", comparer.firstTableResults.get(1));
@@ -226,7 +218,7 @@ public class HistoryComparerTest {
     comparer.secondTableResults.add("X");
     comparer.secondTableResults.add("B");
     comparer.secondTableResults.add("Y");
-    comparer.matchedTables.add(new HistoryComparer.MatchedPair(1, 1, 1.0));
+    comparer.matchedTables.add(new MatchedPair(1, 1, 1.0));
     comparer.lineUpTheTables();
     comparer.addBlanksToUnmatchingRows();
     assertEquals(comparer.firstTableResults.size(), comparer.secondTableResults
@@ -261,10 +253,10 @@ public class HistoryComparerTest {
     comparer.secondTableResults.add("B");
     comparer.secondTableResults.add("Y");
     comparer.secondTableResults.add("D");
-    comparer.matchedTables.add(new HistoryComparer.MatchedPair(1, 1,
-        HistoryComparer.MAX_MATCH_SCORE));
-    comparer.matchedTables.add(new HistoryComparer.MatchedPair(3, 3,
-        HistoryComparer.MAX_MATCH_SCORE));
+    comparer.matchedTables.add(new MatchedPair(1, 1,
+        MatchedPair.MAX_MATCH_SCORE));
+    comparer.matchedTables.add(new MatchedPair(3, 3,
+        MatchedPair.MAX_MATCH_SCORE));
     comparer.lineUpTheTables();
     comparer.addBlanksToUnmatchingRows();
     comparer.makePassFailResultsFromMatches();
@@ -284,7 +276,7 @@ public class HistoryComparerTest {
     FileUtil.createFile("TestFolder/FirstFile", firstContent);
     FileUtil.createFile("TestFolder/SecondFile", firstContent);
     boolean worked = comparer.compare("TestFolder/FirstFile",
-        "TestFolder/SecondFile");
+        "TestFolder/SecondFile").isComparisonPossible();
     assertTrue(worked);
     String expectedResult = "pass";
     assertEquals(expectedResult, comparer.resultContent.get(0));
@@ -298,7 +290,7 @@ public class HistoryComparerTest {
     FileUtil.createFile("TestFolder/FirstFile", firstContent);
     FileUtil.createFile("TestFolder/SecondFile", secondContent);
     boolean worked = comparer.compare("TestFolder/FirstFile",
-        "TestFolder/SecondFile");
+        "TestFolder/SecondFile").isComparisonPossible();
     assertTrue(worked);
     assertEquals("pass", comparer.resultContent.get(0));
     assertEquals("fail", comparer.resultContent.get(1));

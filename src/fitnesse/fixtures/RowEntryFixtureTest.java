@@ -12,17 +12,19 @@ public class RowEntryFixtureTest extends TestCase {
   private Parse simpleTable;
   private String ERROR_MESSAGE = "bad input";
 
-  @SuppressWarnings("unused")
+  @Override
   protected void setUp() throws ParseException {
     fixture = new RowEntryFixture() {
       public int a = 0;
       public int b = 0;
 
+      @Override
       public void enterRow() throws Exception {
         throw new Exception(ERROR_MESSAGE);
       }
     };
-    simpleTable = new Parse("<table><tr><td>a</td></tr><tr><td>b</td></tr></table>");
+    simpleTable = new Parse(
+        "<table><tr><td>a</td></tr><tr><td>b</td></tr></table>");
   }
 
   public void testExplore() {
@@ -58,21 +60,17 @@ public class RowEntryFixtureTest extends TestCase {
   }
 
   public void testBadInput() throws ParseException {
-    Parse table = new Parse("<table>" +
-      "<tr><td>Fixture</td></tr>" +
-      "<tr><td>a</td><td>b</td></tr>" +
-      "<tr><td>1</td><td>2</td></tr>" +
-      "</table>");
+    Parse table = new Parse("<table>" + "<tr><td>Fixture</td></tr>"
+        + "<tr><td>a</td><td>b</td></tr>" + "<tr><td>1</td><td>2</td></tr>"
+        + "</table>");
     fixture.doTable(table);
     assertTrue(table.at(0, 3, 1).body.indexOf(ERROR_MESSAGE) != -1);
   }
 
   public void testMessageFormat() throws ParseException {
-    Parse table = new Parse("<table>" +
-      "<tr><td>Fixture</td></tr>" +
-      "<tr><td>a</td><td>b</td></tr>" +
-      "<tr><td>1</td><td>2</td></tr>" +
-      "</table>");
+    Parse table = new Parse("<table>" + "<tr><td>Fixture</td></tr>"
+        + "<tr><td>a</td><td>b</td></tr>" + "<tr><td>1</td><td>2</td></tr>"
+        + "</table>");
     fixture.doTable(table);
     assertTrue(table.at(0, 3, 1).tag.indexOf("colspan=\"3\"") != -1);
   }

@@ -8,13 +8,14 @@ import fitnesse.html.HtmlTag;
 import fitnesse.wikitext.WidgetBuilder;
 
 public class TableCellWidget extends ParentWidget {
-  @SuppressWarnings("unused")
-  private static Pattern NEWLINE_PATTERN = Pattern.compile("\\\\(" + LINE_BREAK_PATTERN + ")");
+  private static Pattern NEWLINE_PATTERN = Pattern.compile("\\\\("
+      + LINE_BREAK_PATTERN + ")");
 
   private TableRowWidget parentRow = null;
   private boolean isLiteral;
 
-  public TableCellWidget(TableRowWidget parentRow, String text, boolean isLiteral) throws Exception {
+  public TableCellWidget(TableRowWidget parentRow, String text,
+      boolean isLiteral) throws Exception {
     super(parentRow);
     this.parentRow = parentRow;
     this.isLiteral = isLiteral;
@@ -26,6 +27,7 @@ public class TableCellWidget extends ParentWidget {
     return text.trim();
   }
 
+  @Override
   public String render() throws Exception {
     return makeCellTag();
   }
@@ -54,6 +56,7 @@ public class TableCellWidget extends ParentWidget {
     return colspan;
   }
 
+  @Override
   public WidgetBuilder getBuilder() {
     if (isLiteral)
       return WidgetBuilder.literalVariableEvaluatorWidgetBuilder;
@@ -61,4 +64,3 @@ public class TableCellWidget extends ParentWidget {
       return parent.getBuilder();
   }
 }
-
